@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BlendingTree</title>
+    <style>
+        body{
+            margin:0;
+            border:none;
+            overflow: hidden;
+        }
+        #canvas{
+            position:absolute;
+            top:0;
+            left:0;
+        }
+        #depth_container{
+            position: absolute;
+            left:500px;
+            visibility: hidden;
+        }
+        .depth{
+            background-color: aquamarine;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/style.css" type="text/css" />
+    <script type="text/javascript" src="../lib/three.js"></script>
+    <script type="text/javascript" src="../lib/OrbitControls.js"></script>
+    <script type="text/javascript" src="../lib/dat.gui.min.js"></script>
+    <script type="text/javascript" src="../lib/stats.min.js"></script>
+    <script type="text/javascript" src="init.js"></script>
+    <script type="text/javascript" src="loadModel.js"></script>
+    <script type="text/javascript" src="zpyramid.js"></script>
+    <script type="text/javascript" src="LBB.js"></script>
+    <script type="text/javascript" src="../lib/stats.min.js"></script>
+    <script type="text/javascript" src="../lib/dat.gui.min.js"></script>
+    <script src="../public/jquery-1.11.3.min.js"></script>
+</head>
+<body onload="init()">
+<canvas id="canvas"></canvas>
+</body>
+</html>

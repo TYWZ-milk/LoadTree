@@ -1,0 +1,10 @@
+body{
+    border: none;
+    margin:0;
+    overflow: hidden;
+}
+canvas{
+    left:0;
+    top:0;
+    position: absolute;
+}
