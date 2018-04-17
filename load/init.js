@@ -1,11 +1,13 @@
 /**
  * Created by deii66 on 2018/1/30.
  */
-var scene,canvas,width,height,renderer,camera,Orbitcontrols,stats,lbbs;
-var forestSize = 50;//森林总数
+var scene,canvas,width,height,renderer,camera,Trackcontrols,stats,lbbs;
+var forestSize = 100;//森林总数
+var forest = [];
+var leaves = [];
 function init() {
-    lbbs = new LBBs();
-    canvas = document.getElementById("canvas");
+    //lbbs = new LBBs();
+    var canvas = document.getElementById("canvas");
     width = window.innerWidth;
     height = window.innerHeight;
     renderer = new THREE.WebGLRenderer({
@@ -14,6 +16,7 @@ function init() {
     });
     renderer.setSize(width,height);
     renderer.setClearColor(0xaaaaaa,1.0);
+
 
     scene = new THREE.Scene();
     scene.frustumCulled = false;
@@ -30,7 +33,7 @@ function init() {
     camera.position.y = 1300;
     camera.position.z = 800;
 
-    Orbitcontrols = new THREE.OrbitControls( camera, renderer.domElement );
+    Trackcontrols = new THREE.TrackballControls( camera, renderer.domElement );
 
     initStats();
     initGui();
@@ -58,9 +61,9 @@ var controls = new function (){
     this.BS07a = false;
     this.TreeNumber = forestSize;
     this.Delete = function(){
-/*        for(var i=0 ; i <forest.length;i++){
+        for(var i=0 ; i <forest.length;i++){
             scene.remove(forest[i]);
-        }*/
+        }
     };
     this.Blend = function (){
         if(this.AL06a == true && this.Blue_Spruce==true){
@@ -84,18 +87,28 @@ function initGui(){
     dataGui.add(controls,'BS07a');
     dataGui.add(controls,'Blend');
     dataGui.add(controls,"TreeNumber",5,2000).step(1);
-    //dataGui.add(controls,'Delete');
+    dataGui.add(controls,'Delete');
 }
 //初始化场景
 function initScene() {
     scene.add(loadGround());
     scene.add(loadSky());
 }
+function leavesupdate(){
+    for(var j=0,jl=leaves.length;j<jl;j++){
+        leaves[j].visible = (j%leaves[j].level == 0);
+        leaves[j].update();
+    }
+}
+var clock = new THREE.Clock();
 function animate() {
-    Orbitcontrols.update();
-    stats.update();
+    leavesupdate();
+    var delta = clock.getDelta();
+    Trackcontrols.update(delta);
+    stats.begin();
     renderer.clear();
     renderer.render(scene,camera);
-    lbbs.update();
+    stats.end();
+    //lbbs.update();
     requestAnimationFrame(animate);
 }

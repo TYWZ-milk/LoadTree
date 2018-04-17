@@ -2,6 +2,7 @@ var branchImg;
 var leafMat;
 var material;
 var leafMesh;
+var LevelDefine = [0,10000,250000,1000000];
 function loadSky() {
     //add skybox
     var urlPrefix = "../textures/skybox/";
@@ -58,10 +59,6 @@ function initObject(tree1,tree2,forestsize){
 
         newtreecircle(result,forestsize,tree1,tree2);
     });
-
-    //var txt1 = tree1.substr(0,tree1.length-3) + "txtskl";
-    //var txt2 = tree2.substr(0,tree2.length-3) + "txtskl";
-    //readFile('../models/AL06a.txtskl');
 
 
 }
@@ -126,8 +123,8 @@ function newtreecircle(content,forestsize,tree1,tree2){
 
             draw(treecircle, col, row);
             col++;
-            if (col == 5) {
-                col = 0;
+            if (col == 11) {
+                col = -10;
                 row++;
             }
         }
@@ -365,7 +362,7 @@ function drawBranch(trunk) {
      branch = new THREE.Mesh(instancedGeo,shader_material);*/
     var branch = new THREE.Mesh(geo,material);
     tree.push(branch);
-    //forest.push(branch);
+    forest.push(branch);
 }
 //点集转换为32Array
 function translate(vertices){
@@ -427,6 +424,8 @@ function addLeaf(trunk){
                 leaf.init();
                 leaf.instance(trunk,i,j);
                 tree.push(leaf.mesh);
+                forest.push(leaf.mesh);
+                leaves.push(leaf);
 /*                var phi = Math.random() * 60 + 20;
                 var theta = Math.random() * 360;
                 var selfRotate = Math.random() * 360;
@@ -456,7 +455,7 @@ function moveTree(tree,x,y){
 }
 function RTLeaf() {
     this.parent = null;
-    this.tree = null;
+    this.level = 0;
 
     this.size = 1.0;
     this.phi = 0;
@@ -474,6 +473,15 @@ function RTLeaf() {
  */
 RTLeaf.prototype = {
     update:function () {
+        var dist = this.mesh.position.clone();
+        dist.sub(camera.position);
+        dist = dist.x*dist.x+dist.y*dist.y+dist.z*dist.z;
+        var le=0;
+        for(var i=0,il=LevelDefine.length;i<il;i++){
+            if(dist>LevelDefine[i])le++;
+            else break;
+        }
+        this.level = le-1;
         this.mesh.visible = this.visible;
     },
     init:function () {
