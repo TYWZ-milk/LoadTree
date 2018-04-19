@@ -64,6 +64,7 @@ var controls = new function (){
         for(var i=0 ; i <forest.length;i++){
             scene.remove(forest[i]);
         }
+        col = -10;row = -10;
     };
     this.Blend = function (){
         if(this.AL06a == true && this.Blue_Spruce==true){
@@ -98,6 +99,19 @@ function leavesupdate(){
     for(var j=0,jl=leaves.length;j<jl;j++){
         leaves[j].visible = (j%leaves[j].level == 0);
         leaves[j].update();
+    }
+    for(var j=0,jl=forest.length;j<jl;j++) {
+        if(forest[j].maintrunk != true) {
+            var dist = forest[j].position.clone();
+            dist.sub(camera.position);
+            dist = dist.x * dist.x + dist.y * dist.y + dist.z * dist.z;
+            var le = 0;
+            for (var i = 0, il = LevelDefine.length; i < il; i++) {
+                if (dist > LevelDefine[i])le++;
+                else break;
+            }
+            forest[j].visible = (j % le == 0);
+        }
     }
 }
 var clock = new THREE.Clock();

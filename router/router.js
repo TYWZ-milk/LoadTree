@@ -34,7 +34,8 @@ exports.doPostTree = function (req, res, next) {
 
 exports.doGetTree = function (req, res, next) {
     var Collection = "trees";
-    db.find(Collection,{},{},function(err,result){
+    var page=req.query.pageId;
+    db.find(Collection,{},{"pageamount":50,"page":page},function(err,result){
         if(err){
             console.log(err);
         }

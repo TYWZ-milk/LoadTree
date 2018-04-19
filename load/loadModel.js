@@ -2,7 +2,7 @@ var branchImg;
 var leafMat;
 var material;
 var leafMesh;
-var LevelDefine = [0,10000,250000,1000000];
+var LevelDefine = [0,10000,150000,250000,1000000,5000000];
 function loadSky() {
     //add skybox
     var urlPrefix = "../textures/skybox/";
@@ -55,16 +55,29 @@ function initObject(tree1,tree2,forestsize){
     var geo = new THREE.PlaneBufferGeometry(leaf_size,leaf_size);
     leafMesh = new THREE.Mesh(geo,leafMat);
     leafMesh.geometry.translate(0,leaf_size/2.0,0);
-    $.get("http://127.0.0.1:9091/getTreeModel",{},function (result) {
 
-        newtreecircle(result,forestsize,tree1,tree2);
-    });
-
-
+    for(var i = 0 ;i<forestsize/50-1||forestsize/50<1 ; i++) {
+        if(forestsize/50 <1){
+            $.get("http://127.0.0.1:9091/getTreeModel?pageId=" + i, {}, function (result) {
+                newtreecircle(result, forestsize%50, tree1, tree2);
+            });
+            break;
+        }
+        else {
+            $.get("http://127.0.0.1:9091/getTreeModel?pageId=" + i, {}, function (result) {
+                newtreecircle(result, 50, tree1, tree2);
+            });
+        }
+        if(i+1>forestsize/50-1 && forestsize%50!=0){
+            $.get("http://127.0.0.1:9091/getTreeModel?pageId=" + i+1, {}, function (result) {
+                newtreecircle(result, forestsize%50, tree1, tree2);
+            });
+        }
+    }
 }
+var col = -10,row = -10;
 function newtreecircle(content,forestsize,tree1,tree2){
     var treeID = tree1+"_"+tree2;
-    var col = -10,row = -10;
     var treecircle = [];
     var circle;
     var x="", y="",z="";
@@ -255,6 +268,7 @@ function draw(treecircle,col,row){
     drawTree(treecircle);
     addLeaf(treecircle);
     moveTree(tree, col, row);
+    tree[0].maintrunk = true;
     tree = [];
 }
 //有buffer的老版本drawbranch
@@ -419,7 +433,7 @@ function addLeaf(trunk){
 
     for(var i = 1;i<trunk.length;i++) {
         for(var j = Math.floor(trunk[i].length/2+Math.floor(Math.random()*4 + 1));j<trunk[i].length;j+=Math.floor(Math.random()*3 + 1)) {
-            for (var k = Math.floor(Math.random() * 6 + 1); k < 6; k++) {
+            for (var k = Math.floor(Math.random() * 6 + 1); k < 3; k++) {
                 var leaf = new RTLeaf();
                 leaf.init();
                 leaf.instance(trunk,i,j);
@@ -481,7 +495,7 @@ RTLeaf.prototype = {
             if(dist>LevelDefine[i])le++;
             else break;
         }
-        this.level = le-1;
+        this.level = le;
         this.mesh.visible = this.visible;
     },
     init:function () {
