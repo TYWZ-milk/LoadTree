@@ -269,6 +269,11 @@ function draw(treecircle,col,row){
     addLeaf(treecircle);
     moveTree(tree, col, row);
     tree[0].maintrunk = true;
+    tree[0].children = [];
+    for(var i = 1;i<tree.length;i++){
+        tree[0].children.push(tree[i]);
+    }
+    forest.push(tree);
     tree = [];
 }
 //有buffer的老版本drawbranch
@@ -376,8 +381,8 @@ function drawBranch(trunk) {
      branch = new THREE.Mesh(instancedGeo,shader_material);*/
     var branch = new THREE.Mesh(geo,material);
     tree.push(branch);
-    lbbs.add(branch);
-    forest.push(branch);
+    //lbbs.add(branch);
+    //forest.push(branch);
 }
 //点集转换为32Array
 function translate(vertices){
@@ -439,9 +444,9 @@ function addLeaf(trunk){
                 leaf.init();
                 leaf.instance(trunk,i,j);
                 tree.push(leaf.mesh);
-                forest.push(leaf.mesh);
+                //forest.push(leaf.mesh);
                 leaves.push(leaf);
-                lbbs.add(leaf);
+                //lbbs.add(leaf);
 /*                var phi = Math.random() * 60 + 20;
                 var theta = Math.random() * 360;
                 var selfRotate = Math.random() * 360;

@@ -30,8 +30,9 @@ function init() {
 
 
     camera = new THREE.PerspectiveCamera(45,width/height,1,10000);
-    camera.position.y = 1300;
-    camera.position.z = 800;
+    camera.position.y = 50;
+    camera.position.z = 1000;
+    camera.lookAt(0,0,0);
 
     Trackcontrols = new THREE.TrackballControls( camera, renderer.domElement );
 
@@ -62,7 +63,9 @@ var controls = new function (){
     this.TreeNumber = forestSize;
     this.Delete = function(){
         for(var i=0 ; i <forest.length;i++){
-            scene.remove(forest[i]);
+            for(var j = 0;j<forest[i].length;j++) {
+                scene.remove(forest[i][j]);
+            }
         }
         col = -24;row = -24;
     };
@@ -100,23 +103,36 @@ function leavesupdate(){
         leaves[j].visible = (j%leaves[j].level == 0);
         leaves[j].update();
     }
+}
+function forestupdate(){
     for(var j=0,jl=forest.length;j<jl;j++) {
         //if(forest[j].maintrunk != true) {
-            var dist = forest[j].position.clone();
-            dist.sub(camera.position);
-            dist = dist.x * dist.x + dist.y * dist.y + dist.z * dist.z;
-            var le = 0;
-            for (var i = 0, il = LevelDefine.length; i < il; i++) {
-                if (dist > LevelDefine[i])le++;
-                else break;
+        var dist = forest[j][0].position.clone();
+        dist.sub(camera.position);
+        dist = dist.x * dist.x + dist.y * dist.y + dist.z * dist.z;
+        var le = 0;
+        for (var i = 0, il = LevelDefine.length; i < il; i++) {
+            if (dist > LevelDefine[i])le++;
+            else break;
+        }
+        forest[j][0].visible = (j % le == 0);
+        if(forest[j][0].visible == false){
+            for(var i = 0;i<forest[j].length;i++){
+                forest[j][i].visible = false;
             }
-            forest[j].visible = (j % le == 0);
+        }
+        else{
+            for(var i = 0;i<forest[j].length;i++){
+                forest[j][i].visible = true;
+            }
+        }
         //}
     }
 }
 var clock = new THREE.Clock();
 function animate() {
-    leavesupdate();
+    //leavesupdate();
+    forestupdate();
     var delta = clock.getDelta();
     Trackcontrols.update(delta);
     stats.begin();
