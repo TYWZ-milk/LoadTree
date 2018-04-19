@@ -6,7 +6,7 @@ var forestSize = 100;//森林总数
 var forest = [];
 var leaves = [];
 function init() {
-    //lbbs = new LBBs();
+    lbbs = new LBBs();
     var canvas = document.getElementById("canvas");
     width = window.innerWidth;
     height = window.innerHeight;
@@ -64,7 +64,7 @@ var controls = new function (){
         for(var i=0 ; i <forest.length;i++){
             scene.remove(forest[i]);
         }
-        col = -10;row = -10;
+        col = -24;row = -24;
     };
     this.Blend = function (){
         if(this.AL06a == true && this.Blue_Spruce==true){
@@ -101,7 +101,7 @@ function leavesupdate(){
         leaves[j].update();
     }
     for(var j=0,jl=forest.length;j<jl;j++) {
-        if(forest[j].maintrunk != true) {
+        //if(forest[j].maintrunk != true) {
             var dist = forest[j].position.clone();
             dist.sub(camera.position);
             dist = dist.x * dist.x + dist.y * dist.y + dist.z * dist.z;
@@ -111,7 +111,7 @@ function leavesupdate(){
                 else break;
             }
             forest[j].visible = (j % le == 0);
-        }
+        //}
     }
 }
 var clock = new THREE.Clock();
@@ -123,6 +123,6 @@ function animate() {
     renderer.clear();
     renderer.render(scene,camera);
     stats.end();
-    //lbbs.update();
+    lbbs.update();
     requestAnimationFrame(animate);
 }

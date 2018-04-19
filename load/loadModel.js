@@ -21,7 +21,7 @@ function loadSky() {
     });
     // build the skybox Mesh
     // add it to the scene
-    return new THREE.Mesh(new THREE.CubeGeometry(100 * 50, 100 * 50, 100 * 50), material);
+    return new THREE.Mesh(new THREE.CubeGeometry(5000, 5000, 5000), material);
 }
 
 function loadGround() {
@@ -30,7 +30,7 @@ function loadGround() {
     texture2.wrapS = THREE.RepeatWrapping;
     texture2.wrapT = THREE.RepeatWrapping;
     texture2.repeat.set(100*50/100,100*50/100);
-    var plane = new THREE.PlaneGeometry(5*1000,5000);
+    var plane = new THREE.PlaneGeometry(5000,5000);
     plane.rotateX(-Math.PI/2);
     return new THREE.Mesh(plane, new THREE.MeshLambertMaterial({
         map: texture2
@@ -51,7 +51,7 @@ function initObject(tree1,tree2,forestsize){
         side:THREE.DoubleSide,
         map:branchImg
     });
-    var leaf_size = 20;
+    var leaf_size = 5;
     var geo = new THREE.PlaneBufferGeometry(leaf_size,leaf_size);
     leafMesh = new THREE.Mesh(geo,leafMat);
     leafMesh.geometry.translate(0,leaf_size/2.0,0);
@@ -75,7 +75,7 @@ function initObject(tree1,tree2,forestsize){
         }
     }
 }
-var col = -10,row = -10;
+var col = -24,row = -24;
 function newtreecircle(content,forestsize,tree1,tree2){
     var treeID = tree1+"_"+tree2;
     var treecircle = [];
@@ -123,8 +123,8 @@ function newtreecircle(content,forestsize,tree1,tree2){
                     }
                     j += radius.length + 5;
                     circle = {
-                        radius: parseFloat(radius),
-                        pos: new THREE.Vector3(parseFloat(x), parseFloat(y), parseFloat(z))
+                        radius: parseFloat(radius/10),
+                        pos: new THREE.Vector3(parseFloat(x/10), parseFloat(y/10), parseFloat(z/10))
                     };
                     branchcircle.push(circle);
                     x = "";
@@ -136,8 +136,8 @@ function newtreecircle(content,forestsize,tree1,tree2){
 
             draw(treecircle, col, row);
             col++;
-            if (col == 11) {
-                col = -10;
+            if (col == 25) {
+                col = -24;
                 row++;
             }
         }
@@ -376,6 +376,7 @@ function drawBranch(trunk) {
      branch = new THREE.Mesh(instancedGeo,shader_material);*/
     var branch = new THREE.Mesh(geo,material);
     tree.push(branch);
+    lbbs.add(branch);
     forest.push(branch);
 }
 //点集转换为32Array
@@ -440,6 +441,7 @@ function addLeaf(trunk){
                 tree.push(leaf.mesh);
                 forest.push(leaf.mesh);
                 leaves.push(leaf);
+                lbbs.add(leaf);
 /*                var phi = Math.random() * 60 + 20;
                 var theta = Math.random() * 360;
                 var selfRotate = Math.random() * 360;
@@ -462,8 +464,8 @@ function addLeaf(trunk){
 }
 function moveTree(tree,x,y){
     for(var i=0; i <tree.length;i++){
-        tree[i].position.x -= x*230;
-        tree[i].position.z -= y*230;
+        tree[i].position.x -= x*100;
+        tree[i].position.z -= y*100;
         scene.add(tree[i]);
     }
 }
