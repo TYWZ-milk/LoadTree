@@ -56,22 +56,23 @@ function initObject(tree1,tree2,forestsize){
     leafMesh = new THREE.Mesh(geo,leafMat);
     leafMesh.geometry.translate(0,leaf_size/2.0,0);
 
-    for(var i = 0 ;i<forestsize/50-1||forestsize/50<1 ; i++) {
+    for(var i = 0 ;i<forestsize/50||forestsize/50<1 ; i++) {
         if(forestsize/50 <1){
             $.get("http://127.0.0.1:9091/getTreeModel?pageId=" + i, {}, function (result) {
-                newtreecircle(result, forestsize%50, tree1, tree2);
+                newtreecircle(result, forestsize%50/50, tree1, tree2);
             });
             break;
         }
         else {
             $.get("http://127.0.0.1:9091/getTreeModel?pageId=" + i, {}, function (result) {
-                newtreecircle(result, 50, tree1, tree2);
+                newtreecircle(result, 1, tree1, tree2);
             });
         }
         if(i+1>forestsize/50-1 && forestsize%50!=0){
             $.get("http://127.0.0.1:9091/getTreeModel?pageId=" + i+1, {}, function (result) {
-                newtreecircle(result, forestsize%50, tree1, tree2);
+                newtreecircle(result, forestsize%50/50, tree1, tree2);
             });
+            break;
         }
     }
 }
@@ -134,12 +135,17 @@ function newtreecircle(content,forestsize,tree1,tree2){
                 }
             }
 
-            draw(treecircle, col, row);
-            col++;
-            if (col == 25) {
-                col = -24;
-                row++;
+            draw(treecircle);
+            for(var cl = 0 ;cl<49;cl++) {
+                var temp = [];
+                for (var j = 0; j < tree.length; j++) {
+                    temp.push(tree[j].clone());
+                }
+                forest.push(temp);
+                moveTree(temp, cl+1, 0);
             }
+            row++;
+            tree = [];
         }
     }
 }
@@ -263,18 +269,17 @@ function newtreecircle(content,forestsize,tree1,tree2){
 
 }*/
 var tree = [];
-function draw(treecircle,col,row){
+function draw(treecircle){
 
     drawTree(treecircle);
     addLeaf(treecircle);
-    moveTree(tree, col, row);
     tree[0].maintrunk = true;
-    tree[0].children = [];
+    tree[0].childs = [];
     for(var i = 1;i<tree.length;i++){
-        tree[0].children.push(tree[i]);
+        tree[0].childs.push(tree[i]);
     }
+    moveTree(tree, -24, row);
     forest.push(tree);
-    tree = [];
 }
 //有buffer的老版本drawbranch
 var geo = new THREE.BufferGeometry();
@@ -467,11 +472,11 @@ function addLeaf(trunk){
         }
     }
 }
-function moveTree(tree,x,y){
-    for(var i=0; i <tree.length;i++){
-        tree[i].position.x -= x*100;
-        tree[i].position.z -= y*100;
-        scene.add(tree[i]);
+function moveTree(trees,x,y){
+    for(var i=0; i <trees.length;i++){
+        trees[i].position.x -= x*100;
+        trees[i].position.z -= y*100;
+        scene.add(trees[i]);
     }
 }
 function RTLeaf() {

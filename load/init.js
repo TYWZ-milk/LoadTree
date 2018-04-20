@@ -90,7 +90,7 @@ function initGui(){
     dataGui.add(controls,'Blue_Spruce');
     dataGui.add(controls,'BS07a');
     dataGui.add(controls,'Blend');
-    dataGui.add(controls,"TreeNumber",5,2000).step(1);
+    dataGui.add(controls,"TreeNumber",10,2000).step(50);
     dataGui.add(controls,'Delete');
 }
 //初始化场景
@@ -106,7 +106,6 @@ function leavesupdate(){
 }
 function forestupdate(){
     for(var j=0,jl=forest.length;j<jl;j++) {
-        //if(forest[j].maintrunk != true) {
         var dist = forest[j][0].position.clone();
         dist.sub(camera.position);
         dist = dist.x * dist.x + dist.y * dist.y + dist.z * dist.z;
@@ -126,7 +125,6 @@ function forestupdate(){
                 forest[j][i].visible = true;
             }
         }
-        //}
     }
 }
 var clock = new THREE.Clock();
