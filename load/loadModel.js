@@ -2,7 +2,8 @@ var branchImg;
 var leafMat;
 var material;
 var leafMesh;
-var LevelDefine = [0,10000,150000,250000,1000000,5000000];
+var LevelDefine = [0,10000,150000,250000,500000,1000000,2000000,3000000,4000000,5000000,6000000,7000000,8000000,9000000,10000000,15000000,25000000];
+//天空盒
 function loadSky() {
     //add skybox
     var urlPrefix = "../textures/skybox/";
@@ -23,7 +24,7 @@ function loadSky() {
     // add it to the scene
     return new THREE.Mesh(new THREE.CubeGeometry(5000, 5000, 5000), material);
 }
-
+//地面
 function loadGround() {
     //add ground
     var texture2 = THREE.ImageUtils.loadTexture("../textures/terrain/grasslight-big.jpg");
@@ -76,6 +77,7 @@ function initObject(tree1,tree2,forestsize){
         }
     }
 }
+//从MongoDB中取出过渡树木参数，转换为圆环序列
 var col = -24,row = -24;
 function newtreecircle(content,forestsize,tree1,tree2){
     var treeID = tree1+"_"+tree2;
@@ -268,6 +270,7 @@ function newtreecircle(content,forestsize,tree1,tree2){
     );
 
 }*/
+//将圆环序列还原成树
 var tree = [];
 function draw(treecircle){
 
@@ -281,7 +284,7 @@ function draw(treecircle){
     moveTree(tree, -24, row);
     forest.push(tree);
 }
-//有buffer的老版本drawbranch
+//有buffer的老版本drawbranch，绘制每一个branch
 var geo = new THREE.BufferGeometry();
 function drawBranch(trunk) {
     var seg = 5;
@@ -389,7 +392,7 @@ function drawBranch(trunk) {
     //lbbs.add(branch);
     //forest.push(branch);
 }
-//点集转换为32Array
+//点集转换为32Array，用于BufferGeometry的position属性
 function translate(vertices){
     var precision =5;
     var _32array = [];
@@ -432,14 +435,14 @@ function translate(vertices){
     }
     return _32array;
 }
-//层次结构转换为树
+//绘制一棵树
 function drawTree(blendtree){
     for(var i=0;i<blendtree.length;i++) {
         drawBranch(blendtree[i]);
 
     }
 }
-//添加叶子，先将分层了的tree转变成不分层的数组结构，然后在圆环序列上随机添加叶子
+//添加叶子，在圆环序列上随机添加叶子
 function addLeaf(trunk){
 
     for(var i = 1;i<trunk.length;i++) {
@@ -472,6 +475,7 @@ function addLeaf(trunk){
         }
     }
 }
+//修改树木的位置
 function moveTree(trees,x,y){
     for(var i=0; i <trees.length;i++){
         trees[i].position.x -= x*100;
@@ -479,6 +483,7 @@ function moveTree(trees,x,y){
         scene.add(trees[i]);
     }
 }
+//实例化叶子
 function RTLeaf() {
     this.parent = null;
     this.level = 0;
@@ -493,10 +498,7 @@ function RTLeaf() {
 
     this.visible = true;
 }
-/**
- *
- * @type {{}}
- */
+
 RTLeaf.prototype = {
     update:function () {
         var dist = this.mesh.position.clone();

@@ -56,6 +56,7 @@ function initStats() {
 
     return stats;
 }
+//控制界面参数
 var controls = new function (){
     this.AL06a = false;
     this.Blue_Spruce = false;
@@ -84,11 +85,12 @@ var controls = new function (){
         }
     }
 };
+//控制界面
 function initGui(){
     var dataGui = new dat.GUI();
     dataGui.add(controls,'AL06a');
     dataGui.add(controls,'Blue_Spruce');
-    dataGui.add(controls,'BS07a');
+    //dataGui.add(controls,'BS07a');
     dataGui.add(controls,'Blend');
     dataGui.add(controls,"TreeNumber",10,2000).step(50);
     dataGui.add(controls,'Delete');
@@ -98,17 +100,19 @@ function initScene() {
     scene.add(loadGround());
     scene.add(loadSky());
 }
-function leavesupdate(){
+/*function leavesupdate(){
     for(var j=0,jl=leaves.length;j<jl;j++){
         leaves[j].visible = (j%leaves[j].level == 0);
         leaves[j].update();
     }
-}
+}*/
+//从画面中剔除部分距离较远的树木
 function forestupdate(){
     for(var j=0,jl=forest.length;j<jl;j++) {
         var dist = forest[j][0].position.clone();
         dist.sub(camera.position);
-        dist = dist.x * dist.x + dist.y * dist.y + dist.z * dist.z;
+        dist = dist.x * dist.x + dist.y * dist.y + dist.z * dist.z ;
+        //console.log(dist);
         var le = 0;
         for (var i = 0, il = LevelDefine.length; i < il; i++) {
             if (dist > LevelDefine[i])le++;
