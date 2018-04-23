@@ -3,6 +3,7 @@ var leafMat;
 var material;
 var leafMesh;
 var LevelDefine = [0,10000,150000,250000,500000,1000000,2000000,3000000,4000000,5000000,6000000,7000000,8000000,9000000,10000000,15000000,25000000];
+var LeavesLevelDefine = [0,10000,250000,1000000];
 //天空盒
 function loadSky() {
     //add skybox
@@ -78,7 +79,7 @@ function initObject(tree1,tree2,forestsize){
     }
 }
 //从MongoDB中取出过渡树木参数，转换为圆环序列
-var col = -24,row = -24;
+var row = -24;
 function newtreecircle(content,forestsize,tree1,tree2){
     var treeID = tree1+"_"+tree2;
     var treecircle = [];
@@ -281,43 +282,44 @@ function draw(treecircle){
     for(var i = 1;i<tree.length;i++){
         tree[0].childs.push(tree[i]);
     }
-    moveTree(tree, -24, row);
+    moveTree(tree,-24,row);
     forest.push(tree);
 }
 //有buffer的老版本drawbranch，绘制每一个branch
 var geo = new THREE.BufferGeometry();
 function drawBranch(trunk) {
-    var seg = 5;
+
+    var seg = 5 ;
     var vertices = [];
-    geo = new THREE.BufferGeometry();
     var _32array = [];
-    for(var i = 0, l = trunk.length; i < l-1; i ++){
+    for (var i = 0, l = trunk.length; i < l - 1; i++) {
+        geo = new THREE.BufferGeometry();
         var circle = trunk[i];
-        for(var s=0;s<seg;s++){//for each point in the circle
+        for (var s = 0; s < seg; s++) {//for each point in the circle
             var rd = circle.radius;
-            var pos = new THREE.Vector3(0,0,0);
-            var posx=0,posy=0,posz=0;
-            if(i>0) {
+            var pos = new THREE.Vector3(0, 0, 0);
+            var posx = 0, posy = 0, posz = 0;
+            if (i > 0) {
                 posx = Math.abs(trunk[i].pos.x - trunk[i - 1].pos.x);
                 posy = Math.abs(trunk[i].pos.y - trunk[i - 1].pos.y);
                 posz = Math.abs(trunk[i].pos.z - trunk[i - 1].pos.z);
             }
-            if(i==0){
-                posx = Math.abs(trunk[i+1].pos.x - trunk[i].pos.x);
-                posy = Math.abs(trunk[i+1].pos.y - trunk[i].pos.y);
-                posz = Math.abs(trunk[i+1].pos.z - trunk[i].pos.z);
+            if (i == 0) {
+                posx = Math.abs(trunk[i + 1].pos.x - trunk[i].pos.x);
+                posy = Math.abs(trunk[i + 1].pos.y - trunk[i].pos.y);
+                posz = Math.abs(trunk[i + 1].pos.z - trunk[i].pos.z);
             }
-            if(posx>=posy&&posx>=posz) {
+            if (posx >= posy && posx >= posz) {
                 pos.x = 0;
                 pos.y = rd * Math.sin(2 * Math.PI / seg * s);
                 pos.z = rd * Math.cos(2 * Math.PI / seg * s);
             }
-            if(posz>=posx&&posz>=posy){
+            if (posz >= posx && posz >= posy) {
                 pos.x = rd * Math.sin(2 * Math.PI / seg * s);
                 pos.y = rd * Math.cos(2 * Math.PI / seg * s);
                 pos.z = 0;
             }
-            if(posy>=posz&&posy>=posx) {
+            if (posy >= posz && posy >= posx) {
                 pos.x = rd * Math.cos(2 * Math.PI / seg * s);
                 pos.y = 0;
                 pos.z = rd * Math.sin(2 * Math.PI / seg * s);
@@ -325,69 +327,12 @@ function drawBranch(trunk) {
             vertices.push(pos.add(circle.pos));
         }
     }
-    vertices.push(trunk[trunk.length-1].pos);
+    vertices.push(trunk[trunk.length - 1].pos);
     _32array = translate(vertices);
-    /*    for(i=0;i<l-1;i++){
-     for(s=0;s<seg;s++){
-     var v1 = i*seg+s;
-     var v2 = i*seg+(s+1)%seg;
-     var v3 = (i+1)*seg+(s+1)%seg;
-     var v4 = (i+1)*seg+s;
 
-     geo.faces.push(new THREE.Face3(v1,v2,v3));
-     geo.faceVertexUvs[0].push([new THREE.Vector2(s/seg,0),new THREE.Vector2((s+1)/seg,0),new THREE.Vector2((s+1)/seg,1)]);
-     geo.faces.push(new THREE.Face3(v3,v4,v1));
-     geo.faceVertexUvs[0].push([new THREE.Vector2((s+1)/seg,1),new THREE.Vector2((s)/seg,1),new THREE.Vector2((s)/seg,0)]);
-     }
-     }//add faces and uv*/
-    geo.addAttribute( 'position', new THREE.Float32BufferAttribute( _32array, 3 ) );
+    geo.addAttribute('position', new THREE.Float32BufferAttribute(_32array, 3));
     geo.computeVertexNormals();
-    /*    var instancedGeo = new THREE.InstancedBufferGeometry();
-     instancedGeo.index = geo.index;
-     instancedGeo.attributes = geo.attributes;
-
-     var particleCount = 1;
-     var translateArray = new Float32Array( particleCount * 3 );
-
-     for ( var i = 0, i3 = 0, l = particleCount; i < l; i ++, i3 += 3 ) {
-     translateArray[ i3 + 0 ] = Math.random() * 10 - 1;
-     translateArray[ i3 + 1 ] = Math.random() * 10 - 1;
-     translateArray[ i3 + 2 ] = Math.random() * 10 - 1;
-     }
-
-     instancedGeo.addAttribute('translate', new THREE.InstancedBufferAttribute( translateArray, 3, 1 ) );
-     var shader_material = new THREE.RawShaderMaterial({
-     uniforms: {map:{value:branchImg}},
-     vertexShader: [
-     "precision highp float;",
-     "",
-     "uniform mat4 modelViewMatrix;",
-     "uniform mat4 projectionMatrix;",
-     "",
-     "attribute vec3 position;",
-     "attribute vec3 translate;",
-     "",
-     "void main() {",
-     "",
-     "	gl_Position = projectionMatrix * modelViewMatrix * vec4( translate + position, 1.0 );",
-     "",
-     "}"
-     ].join("\n"),
-     fragmentShader: [
-     "precision highp float;",
-     "",
-     "void main() {",
-     "",
-     "	gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);",
-     "",
-     "}"
-     ].join("\n"),
-     side: THREE.DoubleSide,
-     transparent: false,
-
-     });
-     branch = new THREE.Mesh(instancedGeo,shader_material);*/
-    var branch = new THREE.Mesh(geo,material);
+    var branch = new THREE.Mesh(geo, material);
     tree.push(branch);
     //lbbs.add(branch);
     //forest.push(branch);
@@ -447,7 +392,7 @@ function addLeaf(trunk){
 
     for(var i = 1;i<trunk.length;i++) {
         for(var j = Math.floor(trunk[i].length/2+Math.floor(Math.random()*4 + 1));j<trunk[i].length;j+=Math.floor(Math.random()*3 + 1)) {
-            for (var k = Math.floor(Math.random() * 6 + 1); k < 3; k++) {
+            for (var k = Math.floor(Math.random() * 6 + 1); k < 2; k++) {
                 var leaf = new RTLeaf();
                 leaf.init();
                 leaf.instance(trunk,i,j);
@@ -455,22 +400,6 @@ function addLeaf(trunk){
                 //forest.push(leaf.mesh);
                 leaves.push(leaf);
                 //lbbs.add(leaf);
-/*                var phi = Math.random() * 60 + 20;
-                var theta = Math.random() * 360;
-                var selfRotate = Math.random() * 360;
-                var leaf_size = 20;
-
-                var geo = new THREE.PlaneBufferGeometry(leaf_size, leaf_size);
-                geo.computeVertexNormals();
-                var leafMesh = new THREE.Mesh(geo, leafMat);
-                leafMesh.geometry.translate(0, leaf_size / 2.0, 0);
-                leafMesh.rotateY(theta / 180 * Math.PI);
-                leafMesh.rotateZ(phi / 180 * Math.PI);
-                leafMesh.rotateY(selfRotate / 180 * Math.PI);
-                leafMesh.position.x = trunk[i][j].pos.x;
-                leafMesh.position.z = trunk[i][j].pos.z;
-                leafMesh.position.y = trunk[i][j].pos.y;
-                tree.push(leafMesh);*/
             }
         }
     }
@@ -505,8 +434,8 @@ RTLeaf.prototype = {
         dist.sub(camera.position);
         dist = dist.x*dist.x+dist.y*dist.y+dist.z*dist.z;
         var le=0;
-        for(var i=0,il=LevelDefine.length;i<il;i++){
-            if(dist>LevelDefine[i])le++;
+        for(var i=0,il=LeavesLevelDefine.length;i<il;i++){
+            if(dist>LeavesLevelDefine[i])le++;
             else break;
         }
         this.level = le;

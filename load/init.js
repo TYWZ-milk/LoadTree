@@ -100,19 +100,18 @@ function initScene() {
     scene.add(loadGround());
     scene.add(loadSky());
 }
-/*function leavesupdate(){
+function leavesupdate(){
     for(var j=0,jl=leaves.length;j<jl;j++){
         leaves[j].visible = (j%leaves[j].level == 0);
         leaves[j].update();
     }
-}*/
+}
 //从画面中剔除部分距离较远的树木
 function forestupdate(){
     for(var j=0,jl=forest.length;j<jl;j++) {
         var dist = forest[j][0].position.clone();
         dist.sub(camera.position);
         dist = dist.x * dist.x + dist.y * dist.y + dist.z * dist.z ;
-        //console.log(dist);
         var le = 0;
         for (var i = 0, il = LevelDefine.length; i < il; i++) {
             if (dist > LevelDefine[i])le++;
@@ -133,14 +132,14 @@ function forestupdate(){
 }
 var clock = new THREE.Clock();
 function animate() {
-    //leavesupdate();
     forestupdate();
+    //leavesupdate();
     var delta = clock.getDelta();
     Trackcontrols.update(delta);
     stats.begin();
     renderer.clear();
     renderer.render(scene,camera);
     stats.end();
-    lbbs.update();
+    //lbbs.update();
     requestAnimationFrame(animate);
 }
