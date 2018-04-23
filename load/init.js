@@ -92,7 +92,7 @@ function initGui(){
     dataGui.add(controls,'Blue_Spruce');
     //dataGui.add(controls,'BS07a');
     dataGui.add(controls,'Blend');
-    dataGui.add(controls,"TreeNumber",10,2000).step(50);
+    dataGui.add(controls,"TreeNumber",10,3000).step(50);
     dataGui.add(controls,'Delete');
 }
 //初始化场景

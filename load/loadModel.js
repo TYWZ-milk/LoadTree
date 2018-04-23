@@ -58,21 +58,21 @@ function initObject(tree1,tree2,forestsize){
     leafMesh = new THREE.Mesh(geo,leafMat);
     leafMesh.geometry.translate(0,leaf_size/2.0,0);
 
-    for(var i = 0 ;i<forestsize/50||forestsize/50<1 ; i++) {
-        if(forestsize/50 <1){
+    for(var i = 0 ;i<forestsize/500||forestsize/10<50 ; i++) {
+        if(forestsize/10 <50){
             $.get("http://127.0.0.1:9091/getTreeModel?pageId=" + i, {}, function (result) {
-                newtreecircle(result, forestsize%50/50, tree1, tree2);
+                newtreecircle(result, forestsize/50, tree1, tree2);
             });
             break;
         }
         else {
             $.get("http://127.0.0.1:9091/getTreeModel?pageId=" + i, {}, function (result) {
-                newtreecircle(result, 1, tree1, tree2);
+                newtreecircle(result, 10, tree1, tree2);
             });
         }
-        if(i+1>forestsize/50-1 && forestsize%50!=0){
+        if(i+1>forestsize/500-1 && forestsize%500!=0){
             $.get("http://127.0.0.1:9091/getTreeModel?pageId=" + i+1, {}, function (result) {
-                newtreecircle(result, forestsize%50/50, tree1, tree2);
+                newtreecircle(result, forestsize%500/50, tree1, tree2);
             });
             break;
         }
@@ -145,7 +145,7 @@ function newtreecircle(content,forestsize,tree1,tree2){
                     temp.push(tree[j].clone());
                 }
                 forest.push(temp);
-                moveTree(temp, cl+1, 0);
+                moveTree(temp, cl+1, 0,Math.floor(Math.random() * 60 + 1));
             }
             row++;
             tree = [];
@@ -282,7 +282,7 @@ function draw(treecircle){
     for(var i = 1;i<tree.length;i++){
         tree[0].childs.push(tree[i]);
     }
-    moveTree(tree,-24,row);
+    moveTree(tree,-24,row,Math.floor(Math.random() * 60 + 1));
     forest.push(tree);
 }
 //有buffer的老版本drawbranch，绘制每一个branch
@@ -405,10 +405,10 @@ function addLeaf(trunk){
     }
 }
 //修改树木的位置
-function moveTree(trees,x,y){
+function moveTree(trees,x,z,random){
     for(var i=0; i <trees.length;i++){
-        trees[i].position.x -= x*100;
-        trees[i].position.z -= y*100;
+        trees[i].position.x -= x*100 + random;
+        trees[i].position.z -= z*100 + random;
         scene.add(trees[i]);
     }
 }
