@@ -289,7 +289,7 @@ function draw(treecircle){
 var geo = new THREE.BufferGeometry();
 function drawBranch(trunk) {
 
-    var seg = 5 ;
+    var seg = 3 ;
     var vertices = [];
     var _32array = [];
     for (var i = 0, l = trunk.length; i < l - 1; i++) {
@@ -328,7 +328,7 @@ function drawBranch(trunk) {
         }
     }
     vertices.push(trunk[trunk.length - 1].pos);
-    _32array = translate(vertices);
+    _32array = translate(vertices, seg);
 
     geo.addAttribute('position', new THREE.Float32BufferAttribute(_32array, 3));
     geo.computeVertexNormals();
@@ -338,11 +338,10 @@ function drawBranch(trunk) {
     //forest.push(branch);
 }
 //点集转换为32Array，用于BufferGeometry的position属性
-function translate(vertices){
-    var precision =5;
+function translate(vertices,precision){
     var _32array = [];
     for(var i=0;i<vertices.length;i++){
-        if((i+1) %5 == 0 && i + 1 != vertices.length-1){
+        if((i+1) %precision == 0 && i + 1 != vertices.length-1){
             _32array.push(vertices[i].x, vertices[i].y, vertices[i].z);
             _32array.push(vertices[i - precision +1].x, vertices[i - precision +1].y, vertices[i - precision +1].z);
             _32array.push(vertices[i + precision].x, vertices[i + precision].y, vertices[i + precision].z);
@@ -366,8 +365,8 @@ function translate(vertices){
             _32array.push(vertices[i + precision].x, vertices[i + precision].y, vertices[i + precision].z);
         }
     }
-    for(var j = vertices.length-2; j>=5;j--){
-        if(j % 5 ==0){
+    for(var j = vertices.length-2; j>=precision;j--){
+        if(j % precision ==0){
             _32array.push(vertices[j].x, vertices[j].y, vertices[j].z);
             _32array.push(vertices[j + precision -1].x, vertices[j + precision -1].y, vertices[j + precision -1].z);
             _32array.push(vertices[j - 1].x, vertices[j - 1].y, vertices[j -1].z);

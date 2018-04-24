@@ -68,7 +68,7 @@ var controls = new function (){
                 scene.remove(forest[i][j]);
             }
         }
-        col = -24;row = -24;
+        row = -24;
     };
     this.Blend = function (){
         if(this.AL06a == true && this.Blue_Spruce==true){
@@ -92,7 +92,7 @@ function initGui(){
     dataGui.add(controls,'Blue_Spruce');
     //dataGui.add(controls,'BS07a');
     dataGui.add(controls,'Blend');
-    dataGui.add(controls,"TreeNumber",10,3000).step(50);
+    dataGui.add(controls,"TreeNumber",50,3000).step(50);
     dataGui.add(controls,'Delete');
 }
 //初始化场景
