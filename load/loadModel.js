@@ -53,7 +53,7 @@ function initObject(tree1,tree2,forestsize){
         side:THREE.DoubleSide,
         map:branchImg
     });
-    var leaf_size = 5;
+    var leaf_size = 10;
     var geo = new THREE.PlaneBufferGeometry(leaf_size,leaf_size);
     leafMesh = new THREE.Mesh(geo,leafMat);
     leafMesh.geometry.translate(0,leaf_size/2.0,0);
@@ -453,8 +453,8 @@ RTLeaf.prototype = {
         mesh.position.x = trunk[i][j].pos.x;
         mesh.position.z = trunk[i][j].pos.z;
         mesh.position.y = trunk[i][j].pos.y;
-        this.size *= 2-this.location;
-        mesh.scale.x = mesh.scale.y = mesh.scale.z = this.size;
+/*        this.size *= 2-this.location;
+        mesh.scale.x = mesh.scale.y = mesh.scale.z = this.size;*/
         this.mesh = mesh;
 
     }
