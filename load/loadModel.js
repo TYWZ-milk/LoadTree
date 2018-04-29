@@ -32,8 +32,17 @@ function loadGround() {
     texture2.wrapS = THREE.RepeatWrapping;
     texture2.wrapT = THREE.RepeatWrapping;
     texture2.repeat.set(100*50/100,100*50/100);
-    var plane = new THREE.PlaneGeometry(5000,5000);
+    var plane = new THREE.PlaneGeometry(5000,5000,255,255);
     plane.rotateX(-Math.PI/2);
+    var vertices = plane.vertices;
+    for(var i = 0 ;i<plane.vertices.length;i++){
+        var random = Math.floor(Math.random()*100 + 1);
+        if(i%random==0) {
+            vertices[i].y = random;
+            vertices[i+1].y = random +1;
+        }
+    }
+    plane.computeVertexNormals();
     return new THREE.Mesh(plane, new THREE.MeshLambertMaterial({
         map: texture2
     }));
