@@ -29,7 +29,7 @@ function loadSky() {
 var planevertices;
 function loadGround() {
     //add ground
-    var texture2 = THREE.ImageUtils.loadTexture("../textures/terrain/grasslight-big.jpg");
+    var texture2 = THREE.ImageUtils.loadTexture("../textures/terrain/backgrounddetailed6.jpg");
     texture2.wrapS = THREE.RepeatWrapping;
     texture2.wrapT = THREE.RepeatWrapping;
     texture2.repeat.set(100*50/100,100*50/100);
@@ -81,7 +81,7 @@ function initObject(tree1,tree2,forestsize){
         side:THREE.DoubleSide,
         map:branchImg
     });
-    var leaf_size = 10;
+    var leaf_size = 70;
     var geo = new THREE.PlaneBufferGeometry(leaf_size,leaf_size);
     leafMesh = new THREE.Mesh(geo,leafMat);
     leafMesh.geometry.translate(0,leaf_size/2.0,0);
@@ -155,8 +155,8 @@ function newtreecircle(content,forestsize,tree1,tree2){
                     }
                     j += radius.length + 5;
                     circle = {
-                        radius: parseFloat(radius/10),
-                        pos: new THREE.Vector3(parseFloat(x/10), parseFloat(y/10), parseFloat(z/10))
+                        radius: parseFloat(radius),
+                        pos: new THREE.Vector3(parseFloat(x), parseFloat(y), parseFloat(z))
                     };
                     branchcircle.push(circle);
                     x = "";
@@ -182,7 +182,7 @@ function newtreecircle(content,forestsize,tree1,tree2){
                 }
                 forest.push(temp);
                 moveTree(temp);
-                planepos+=30;
+                planepos+=30 * Math.floor(Math.random() * 6 + 1);
             }
             row++;
             tree = [];
@@ -320,7 +320,7 @@ function draw(treecircle){
         tree[0].childs.push(tree[i]);
     }
     moveTree(tree);
-    planepos+=30;
+    planepos+=30 * Math.floor(Math.random() * 6 + 1);
     forest.push(tree);
 }
 //有buffer的老版本drawbranch，绘制每一个branch
