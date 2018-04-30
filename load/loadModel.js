@@ -26,26 +26,46 @@ function loadSky() {
     return new THREE.Mesh(new THREE.CubeGeometry(5000, 5000, 5000), material);
 }
 //地面
+var planevertices;
 function loadGround() {
     //add ground
     var texture2 = THREE.ImageUtils.loadTexture("../textures/terrain/grasslight-big.jpg");
     texture2.wrapS = THREE.RepeatWrapping;
     texture2.wrapT = THREE.RepeatWrapping;
     texture2.repeat.set(100*50/100,100*50/100);
-    var plane = new THREE.PlaneGeometry(5000,5000,255,255);
+    var plane = new THREE.PlaneBufferGeometry(5000,5000,255,255);
     plane.rotateX(-Math.PI/2);
-    var vertices = plane.vertices;
-    for(var i = 0 ;i<plane.vertices.length;i++){
-        var random = Math.floor(Math.random()*100 + 1);
-        if(i%random==0) {
-            vertices[i].y = random;
-            vertices[i+1].y = random +1;
-        }
+    planevertices = plane.attributes.position.array;
+    var data = generateHeight( 256, 256 );
+    for ( var i = 0, j = 0, l = planevertices.length; i < l; i ++, j += 3 ) {
+
+        planevertices[ j + 1 ] = data[ i ] * 10;
     }
     plane.computeVertexNormals();
     return new THREE.Mesh(plane, new THREE.MeshLambertMaterial({
         map: texture2
     }));
+}
+function generateHeight( width, height ) {
+
+    var size = width * height, data = new Uint8Array( size ),
+        perlin = new ImprovedNoise(), quality = 1, z = Math.random() * 100;
+
+    for ( var j = 0; j < 4; j ++ ) {
+
+        for ( var i = 0; i < size; i ++ ) {
+
+            var x = i % width, y = ~~ ( i / width );
+            data[ i ] += Math.abs( perlin.noise( x / quality, y / quality, z ) * quality * 1.75 );
+
+        }
+
+        quality *= 5;
+
+    }
+
+    return data;
+
 }
 //初始化树木
 function initObject(tree1,tree2,forestsize){
@@ -54,8 +74,7 @@ function initObject(tree1,tree2,forestsize){
         map:THREE.ImageUtils.loadTexture("../textures/tree/leaf01-min.png"),
         color:0x253F08,
         side:THREE.DoubleSide,
-        transparent:true,
-        depthTest:false
+        transparent:true
     });
     material = new THREE.MeshLambertMaterial({
         // wireframe:true,
@@ -153,8 +172,17 @@ function newtreecircle(content,forestsize,tree1,tree2){
                 for (var j = 0; j < tree.length; j++) {
                     temp.push(tree[j].clone());
                 }
+                var zerox = temp[0].position.x;
+                var zeroy = temp[0].position.y;
+                var zeroz = temp[0].position.z;
+                for(var j = 0;j<temp.length;j++){
+                    temp[j].position.x -= zerox;
+                    temp[j].position.y -= zeroy;
+                    temp[j].position.z -= zeroz;
+                }
                 forest.push(temp);
-                moveTree(temp, cl+1, 0,Math.floor(Math.random() * 60 + 1));
+                moveTree(temp);
+                planepos+=30;
             }
             row++;
             tree = [];
@@ -291,7 +319,8 @@ function draw(treecircle){
     for(var i = 1;i<tree.length;i++){
         tree[0].childs.push(tree[i]);
     }
-    moveTree(tree,-24,row,Math.floor(Math.random() * 60 + 1));
+    moveTree(tree);
+    planepos+=30;
     forest.push(tree);
 }
 //有buffer的老版本drawbranch，绘制每一个branch
@@ -413,10 +442,12 @@ function addLeaf(trunk){
     }
 }
 //修改树木的位置
-function moveTree(trees,x,z,random){
+var planepos = 30;
+function moveTree(trees){
     for(var i=0; i <trees.length;i++){
-        trees[i].position.x -= x*100 + random;
-        trees[i].position.z -= z*100 + random;
+        trees[i].position.x += planevertices[planepos];
+        trees[i].position.z += planevertices[planepos+2];
+        trees[i].position.y += planevertices[planepos+1];
         scene.add(trees[i]);
     }
 }
