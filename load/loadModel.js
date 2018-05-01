@@ -39,7 +39,7 @@ function loadGround() {
     var data = generateHeight( 256, 256 );
     for ( var i = 0, j = 0, l = planevertices.length; i < l; i ++, j += 3 ) {
 
-        planevertices[ j + 1 ] = data[ i ] * 10;
+        planevertices[ j + 1 ] = data[ i ] * 2;
     }
     plane.computeVertexNormals();
     return new THREE.Mesh(plane, new THREE.MeshLambertMaterial({
@@ -155,8 +155,8 @@ function newtreecircle(content,forestsize,tree1,tree2){
                     }
                     j += radius.length + 5;
                     circle = {
-                        radius: parseFloat(radius),
-                        pos: new THREE.Vector3(parseFloat(x), parseFloat(y), parseFloat(z))
+                        radius: parseFloat(radius/2),
+                        pos: new THREE.Vector3(parseFloat(x/2), parseFloat(y/2), parseFloat(z/2))
                     };
                     branchcircle.push(circle);
                     x = "";
@@ -327,7 +327,7 @@ function draw(treecircle){
 var geo = new THREE.BufferGeometry();
 function drawBranch(trunk) {
 
-    var seg = 3 ;
+    var seg = 5 ;
     var vertices = [];
     var _32array = [];
     for (var i = 0, l = trunk.length; i < l - 1; i++) {
