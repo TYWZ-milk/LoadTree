@@ -2,7 +2,7 @@ var branchImg;
 var leafMat;
 var material;
 var leafMesh;
-var LevelDefine = [0,10000,150000,250000,500000,1000000,2000000,3000000,4000000,5000000,6000000,7000000,8000000,9000000,10000000,15000000,25000000];
+var LevelDefine = [0,250000,500000,1000000,2000000,3000000,4000000,5000000,6000000,7000000,8000000,9000000,10000000,15000000,25000000];
 var LeavesLevelDefine = [0,10000,250000,1000000];
 //天空盒
 function loadSky() {
@@ -86,8 +86,15 @@ function initObject(tree1,tree2,forestsize){
     leafMesh = new THREE.Mesh(geo,leafMat);
     leafMesh.geometry.translate(0,leaf_size/2.0,0);
 
-    for(var i = 0 ;i<forestsize/500||forestsize/10<50 ; i++) {
-        if(forestsize/10 <50){
+    var i;
+    if(tree1 == "AL06a"  && tree2 =="Blue Spruce")
+        i=0;
+    else if(tree1 == "AL06a"  && tree2 =="BS07a")
+        i=6;
+    else if(tree1 == "Blue Spruce"  && tree2 =="BS07a")
+        i=12;
+    for(var j = 0 ;j<forestsize/2500||forestsize/10<250 ; i++,j++) {
+        if(forestsize/10 <250){
             $.get("http://127.0.0.1:9091/getTreeModel?pageId=" + i, {}, function (result) {
                 newtreecircle(result, forestsize/50, tree1, tree2);
             });
@@ -95,20 +102,20 @@ function initObject(tree1,tree2,forestsize){
         }
         else {
             $.get("http://127.0.0.1:9091/getTreeModel?pageId=" + i, {}, function (result) {
-                newtreecircle(result, 10, tree1, tree2);
+                newtreecircle(result, 50, tree1, tree2);
             });
         }
-        if(i+1>forestsize/500-1 && forestsize%500!=0){
+        if(j+1>forestsize/2500-1 && forestsize%2500!=0){
             $.get("http://127.0.0.1:9091/getTreeModel?pageId=" + i+1, {}, function (result) {
-                newtreecircle(result, forestsize%500/50, tree1, tree2);
+                newtreecircle(result, forestsize%2500/50, tree1, tree2);
             });
             break;
         }
     }
 }
 //从MongoDB中取出过渡树木参数，转换为圆环序列
-var row = -24;
 function newtreecircle(content,forestsize,tree1,tree2){
+    planepos = 30;
     var treeID = tree1+"_"+tree2;
     var treecircle = [];
     var circle;
@@ -184,130 +191,10 @@ function newtreecircle(content,forestsize,tree1,tree2){
                 moveTree(temp);
                 planepos+=30 * Math.floor(Math.random() * 6 + 1);
             }
-            row++;
             tree = [];
         }
     }
 }
-/*function readFile(txt1){
-    var treecircle = [];
-    var loaderTree1 = new THREE.FileLoader();
-
-//load a text file a output the result to the console
-    loaderTree1.load(
-        // resource URL
-        txt1,
-
-        // Function when resource is loaded
-        function ( data ) {
-            var layer = [];
-            var circle;
-            var x="", y="",z="";
-            var radius="";
-            var temp=0;
-            var branchlength="";
-            var trunk=[];
-            var child="";
-            var position="";
-            // output the text to the console
-            for(var i=0;i<data.length;i++) {
-                temp = 0;
-                x="";
-                y="";
-                z="";
-                radius="";
-                if(data[i]=='L'){
-                    var number=data[i+9].toString();
-                    if(data[i+10]!='\r') {
-                        number += data[i + 10].toString();
-                        if (data[i + 11] != '\r') {
-                            number += data[i + 11].toString();
-                            i+=14;
-                        }
-                        else{
-                            i+=13;
-                        }
-                    }
-                    else{
-                        i+=12;
-                    }
-                    number = parseInt(number);
-                }
-                if(data[i+5]=='\r'||data[i+4]=='\r'||data[i+3]=='\r') {
-                    branchlength='';
-                    child='';
-                    position='';
-                    while (data[i] != ' ') {
-                        child += data[i].toString();
-                        i++;
-                    }
-                    i++;
-                    while (data[i] != '\r'){
-                        position += data[i].toString();
-                        i++;
-                    }
-                    i+=2;
-                    while (data[i] != '\r') {
-                        branchlength += data[i].toString();
-                        i++;
-                    }
-                    i += 2;
-                }
-                for(var j=i;data[j]!='\r'&&j<data.length;j++) {
-                    if(data[j]!=' ') {
-                        if(temp==0){
-                            x+=data[j];
-                        }
-                        if(temp==1){
-                            y+=data[j];
-                        }
-                        if(temp==2){
-                            z+=data[j];
-                        }
-                        if(temp==3){
-                            radius+=data[j];
-                        }
-                    }
-                    else{
-                        temp++;
-                    }
-                }
-                i = j+1;
-                if(branchlength!=0) {
-                    circle = {
-                        radius: radius * 70,
-                        position:position,//
-                        child:child,
-                        pos: new THREE.Vector3(x * 70, y * 70, z * 70)
-                    };
-                    trunk.push(circle);
-                    branchlength--;
-                    if(branchlength==0){
-                        layer.push(trunk);
-                        number--;
-                        if(number == 0){
-                            treecircle.push(layer);
-                            layer = [];
-                        }
-                        trunk=[];
-                    }
-                }
-            }
-            draw(treecircle);
-        },
-
-        // Function called when download progresses
-        function ( xhr ) {
-            console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
-        },
-
-        // Function called when download errors
-        function ( xhr ) {
-            console.error( 'An error happened' );
-        }
-    );
-
-}*/
 //将圆环序列还原成树
 var tree = [];
 function draw(treecircle){

@@ -77,11 +77,11 @@ var controls = new function (){
         }
         else if(this.AL06a == true && this.BS07a == true){
             THREE.Cache.clear();
-            initObject("AL06a","BS07a_elastic_1_max",this.TreeNumber);
+            initObject("AL06a","BS07a",this.TreeNumber);
         }
         else if(this.Blue_Spruce == true && this.BS07a == true){
             THREE.Cache.clear();
-            initObject("Blue Spruce","BS07a_elastic_1_max",this.TreeNumber);
+            initObject("Blue Spruce","BS07a",this.TreeNumber);
         }
     }
 };
@@ -90,9 +90,9 @@ function initGui(){
     var dataGui = new dat.GUI();
     dataGui.add(controls,'AL06a');
     dataGui.add(controls,'Blue_Spruce');
-    //dataGui.add(controls,'BS07a');
+    dataGui.add(controls,'BS07a');
     dataGui.add(controls,'Blend');
-    dataGui.add(controls,"TreeNumber",50,5000).step(50);
+    dataGui.add(controls,"TreeNumber",50,3000).step(50);
     dataGui.add(controls,'Delete');
 }
 //初始化场景
