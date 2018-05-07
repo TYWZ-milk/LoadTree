@@ -92,7 +92,7 @@ function initGui(){
     dataGui.add(controls,'Blue_Spruce');
     dataGui.add(controls,'BS07a');
     dataGui.add(controls,'Blend');
-    dataGui.add(controls,"TreeNumber",50,3000).step(50);
+    dataGui.add(controls,"TreeNumber",50,8000).step(50);
     dataGui.add(controls,'Delete');
 }
 //初始化场景
@@ -133,7 +133,7 @@ function forestupdate(){
 var clock = new THREE.Clock();
 function animate() {
     forestupdate();
-    //leavesupdate();
+    leavesupdate();
     var delta = clock.getDelta();
     Trackcontrols.update(delta);
     stats.begin();

@@ -1,4 +1,5 @@
 var branchImg;
+var leafImg;
 var leafMat;
 var material;
 var leafMesh;
@@ -39,7 +40,7 @@ function loadGround() {
     var data = generateHeight( 256, 256 );
     for ( var i = 0, j = 0, l = planevertices.length; i < l; i ++, j += 3 ) {
 
-        planevertices[ j + 1 ] = data[ i ] * 2;
+        planevertices[ j + 1 ] = data[ i ] * 3;
     }
     plane.computeVertexNormals();
     return new THREE.Mesh(plane, new THREE.MeshLambertMaterial({
@@ -70,8 +71,9 @@ function generateHeight( width, height ) {
 //初始化树木
 function initObject(tree1,tree2,forestsize){
     branchImg = new THREE.ImageUtils.loadTexture("../textures/tree/diffuse-min.png");
+    leafImg = new THREE.ImageUtils.loadTexture("../textures/tree/leaf01-min.png");
     leafMat = new THREE.MeshLambertMaterial({
-        map:THREE.ImageUtils.loadTexture("../textures/tree/leaf01-min.png"),
+        map:leafImg,
         color:0x253F08,
         side:THREE.DoubleSide,
         transparent:true
@@ -83,8 +85,63 @@ function initObject(tree1,tree2,forestsize){
     });
     var leaf_size = 70;
     var geo = new THREE.PlaneBufferGeometry(leaf_size,leaf_size);
-    leafMesh = new THREE.Mesh(geo,leafMat);
-    leafMesh.geometry.translate(0,leaf_size/2.0,0);
+    //leafMesh = new THREE.Mesh(geo,leafMat);
+    //leafMesh.geometry.translate(0,leaf_size/2.0,0);
+
+    var particleCount = 1;
+    var translateArray = new Float32Array( particleCount * 3 );
+
+    for ( var i = 0, i3 = 0, l = particleCount; i < l; i ++, i3 += 3 ) {
+        translateArray[ i3 ] = 0;
+        translateArray[ i3 + 1 ] = 0;
+        translateArray[ i3 + 2 ] = 0;
+    }
+    var instancedGeo = new THREE.InstancedBufferGeometry();
+    instancedGeo.index = geo.index;
+    instancedGeo.attributes = geo.attributes;
+    instancedGeo.addAttribute('translate', new THREE.InstancedBufferAttribute( translateArray, 3, 1 ) );
+    var uniforms = {
+        texture1 : {value : leafImg}
+    };
+    uniforms.texture1.value.warpS = uniforms.texture1.value.warpT = THREE.RepeatWrapping;
+    var shader_material = new THREE.RawShaderMaterial({
+        uniforms: uniforms,
+        vertexShader: [
+            "precision highp float;",
+            "",
+            "uniform mat4 modelViewMatrix;",
+            "uniform mat4 projectionMatrix;",
+            "",
+            "attribute vec3 position;",
+            "attribute vec3 translate;",
+            "varying vec2 vUv;",
+            "",
+            "void main() {",
+            "",
+            "	gl_Position = projectionMatrix * modelViewMatrix * vec4( translate + position, 1.0 );",
+            "",
+            "}"
+        ].join("\n"),
+        fragmentShader: [
+            "precision highp float;",
+            "",
+            "varying vec2 vUv;",
+            "",
+            "uniform sampler2D texture1;",
+            "",
+            "void main(void) {",
+            "",
+            "	gl_FragColor = texture2D(texture1, vUv);",
+            "",
+            "}"
+        ].join("\n"),
+        side: THREE.DoubleSide,
+        transparent: false,
+
+    });
+    var instencedMesh = new THREE.Mesh(instancedGeo, shader_material);
+    scene.add(instencedMesh);
+
 
     var i;
     if(tree1 == "AL06a"  && tree2 =="Blue Spruce")
@@ -259,8 +316,6 @@ function drawBranch(trunk) {
     geo.computeVertexNormals();
     var branch = new THREE.Mesh(geo, material);
     tree.push(branch);
-    //lbbs.add(branch);
-    //forest.push(branch);
 }
 //点集转换为32Array，用于BufferGeometry的position属性
 function translate(vertices,precision){
