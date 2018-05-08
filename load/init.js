@@ -133,7 +133,7 @@ function forestupdate(){
 var clock = new THREE.Clock();
 function animate() {
     forestupdate();
-    leavesupdate();
+    //leavesupdate();
     var delta = clock.getDelta();
     Trackcontrols.update(delta);
     stats.begin();
