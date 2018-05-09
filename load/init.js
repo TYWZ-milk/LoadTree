@@ -68,7 +68,6 @@ var controls = new function (){
                 scene.remove(forest[i][j]);
             }
         }
-        row = -24;
     };
     this.Blend = function (){
         if(this.AL06a == true && this.Blue_Spruce==true){
@@ -92,7 +91,7 @@ function initGui(){
     dataGui.add(controls,'Blue_Spruce');
     dataGui.add(controls,'BS07a');
     dataGui.add(controls,'Blend');
-    dataGui.add(controls,"TreeNumber",50,8000).step(50);
+    dataGui.add(controls,"TreeNumber",50,3000).step(50);
     dataGui.add(controls,'Delete');
 }
 //初始化场景
@@ -138,6 +137,7 @@ function animate() {
     Trackcontrols.update(delta);
     stats.begin();
     renderer.clear();
+    renderer.setFaceCulling(THREE.CullFaceBack,THREE.FrontFaceDirectionCW);
     renderer.render(scene,camera);
     stats.end();
     //lbbs.update();

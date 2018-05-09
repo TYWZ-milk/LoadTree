@@ -279,9 +279,9 @@ function drawBranch(trunk) {
     instancedGeo.attributes = geo.attributes;
     instancedGeo.addAttribute('translate', new THREE.InstancedBufferAttribute( translateArray, 3, 1 ) );
     var uniforms = {
-        texture1 : {value : branchImg}
+        map : {value : branchImg}
     };
-    uniforms.texture1.value.warpS = uniforms.texture1.value.warpT = THREE.RepeatWrapping;
+    //uniforms.texture1.value.warpS = uniforms.texture1.value.warpT = THREE.RepeatWrapping;
     var shader_material = new THREE.RawShaderMaterial({
         uniforms: uniforms,
         vertexShader: [
