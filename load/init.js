@@ -129,9 +129,13 @@ function forestupdate(){
         }
     }
 }
+function FOI(){
+
+}
 var clock = new THREE.Clock();
 function animate() {
     forestupdate();
+    FOI();
     //leavesupdate();
     var delta = clock.getDelta();
     Trackcontrols.update(delta);

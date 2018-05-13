@@ -88,7 +88,34 @@ function initObject(tree1,tree2,forestsize){
     var geo = new THREE.PlaneBufferGeometry(leaf_size,leaf_size);
     leafMesh = new THREE.Mesh(geo,leafMat);
     leafMesh.geometry.translate(0,leaf_size/2.0,0);
-
+    //var loader = new THREE.OBJLoader();
+    // loader.load('../models/AL06a.obj', function(geometry) {
+    // geometry.traverse(function (child) {
+    // if(child instanceof THREE.Mesh){
+    // child.material.depthTest = false;
+    // //child.material.map = THREE.ImageUtils.loadTexture('../textures/tree/timg.jpg');
+    // child.geometry.computeBoundingSphere();
+    // }
+    // });
+    //     geometry.scale.set(100, 100, 100);
+    // geometry.translateX(-500);
+    //     geometry.translateZ(-500);
+    // scene.add(geometry);
+    // });
+    //
+    // loader=new THREE.OBJLoader();
+    // loader.load('../models/BS07a.obj', function(geometry) {
+    // geometry.traverse(function (child) {
+    // if(child instanceof THREE.Mesh){
+    // child.material.depthTest = false;
+    // //child.material.map = THREE.ImageUtils.loadTexture('../textures/tree/timg.jpg');
+    // child.geometry.computeBoundingSphere();
+    // }
+    // });
+    // geometry.scale.set(100, 100, 100);
+    // geometry.translateX(500);
+    // scene.add(geometry);
+    // });
 
     var i;
     if(tree1 == "AL06a"  && tree2 =="Blue Spruce")
