@@ -91,7 +91,7 @@ function initGui(){
     dataGui.add(controls,'Blue_Spruce');
     dataGui.add(controls,'BS07a');
     dataGui.add(controls,'Blend');
-    dataGui.add(controls,"TreeNumber",50,3000).step(50);
+    dataGui.add(controls,"TreeNumber",50,5000).step(50);
     dataGui.add(controls,'Delete');
 }
 //初始化场景
@@ -107,7 +107,10 @@ function leavesupdate(){
 }
 //从画面中剔除部分距离较远的树木
 function forestupdate(){
+    var cameraMatrix = new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse);
     for(var j=0,jl=forest.length;j<jl;j++) {
+        var point = new THREE.Vector3(forest[j][0].position.x,forest[j][0].position.y,forest[j][0].position.z);
+        var z = point.applyMatrix4(cameraMatrix).z;
         var dist = forest[j][0].position.clone();
         dist.sub(camera.position);
         dist = dist.x * dist.x + dist.y * dist.y + dist.z * dist.z ;
@@ -122,6 +125,12 @@ function forestupdate(){
                 forest[j][i].visible = false;
             }
         }
+        else if(z>1){
+            forest[j][0].visibale = false;
+            for(var i = 0;i<forest[j].length;i++){
+                forest[j][i].visible = false;
+            }
+        }
         else{
             for(var i = 0;i<forest[j].length;i++){
                 forest[j][i].visible = true;
@@ -129,13 +138,27 @@ function forestupdate(){
         }
     }
 }
-function FOI(){
-
-}
+//function FOI(){
+//    var cameraMatrix = new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse);
+//    for(var j=0,jl=forest.length;j<jl;j++) {
+//        var point = new THREE.Vector3(forest[j][0].position.x,forest[j][0].position.y,forest[j][0].position.z);
+//        var z = point.applyMatrix4(cameraMatrix).z;
+//        if(z>1) {
+//            forest[j][0].visibale = false;
+//            for(var i = 0;i<forest[j].length;i++){
+//                forest[j][i].visible = false;
+//            }
+//        }
+//        else if(forest[j][0].visibale == true){
+//            for(var i = 0;i<forest[j].length;i++){
+//                forest[j][i].visible = true;
+//            }
+//        }
+//    }
+//}
 var clock = new THREE.Clock();
 function animate() {
     forestupdate();
-    FOI();
     //leavesupdate();
     var delta = clock.getDelta();
     Trackcontrols.update(delta);
