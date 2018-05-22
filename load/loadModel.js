@@ -84,7 +84,7 @@ function initObject(tree1,tree2,forestsize){
         side:THREE.DoubleSide,
         map:branchImg
     });
-    var leaf_size = 7;
+    var leaf_size = 14;
     var geo = new THREE.PlaneBufferGeometry(leaf_size,leaf_size);
     leafMesh = new THREE.Mesh(geo,leafMat);
     leafMesh.geometry.translate(0,leaf_size/2.0,0);
@@ -194,8 +194,8 @@ function newtreecircle(content,forestsize,tree1,tree2){
                     }
                     j += radius.length + 5;
                     circle = {
-                        radius: parseFloat(radius/10),
-                        pos: new THREE.Vector3(parseFloat(x/10), parseFloat(y/10), parseFloat(z/10))
+                        radius: parseFloat(radius/5),
+                        pos: new THREE.Vector3(parseFloat(x/5), parseFloat(y/5), parseFloat(z/5))
                     };
                     branchcircle.push(circle);
                     x = "";
@@ -206,6 +206,51 @@ function newtreecircle(content,forestsize,tree1,tree2){
             }
 
             draw(treecircle);
+
+            var uniforms = {
+                map : {value : branchImg}
+            };
+            //uniforms.texture1.value.warpS = uniforms.texture1.value.warpT = THREE.RepeatWrapping;
+            var shader_material = new THREE.RawShaderMaterial({
+                uniforms: uniforms,
+                vertexShader: [
+                    "precision highp float;",
+                    "",
+                    "uniform mat4 modelViewMatrix;",
+                    "uniform mat4 projectionMatrix;",
+                    "",
+                    "attribute vec3 position;",
+                    "attribute vec3 translate;",
+                    "varying vec2 vUv;",
+                    "",
+                    "void main() {",
+                    "",
+                    "	gl_Position = projectionMatrix * modelViewMatrix * vec4( translate + position, 1.0 );",
+                    "",
+                    "}"
+                ].join("\n"),
+                fragmentShader: [
+                    "precision highp float;",
+                    "",
+                    "varying vec2 vUv;",
+                    "",
+                    "uniform sampler2D texture1;",
+                    "",
+                    "void main(void) {",
+                    "",
+                    "	gl_FragColor = texture2D(texture1, vUv);",
+                    "",
+                    "}"
+                ].join("\n"),
+                side: THREE.DoubleSide,
+                transparent: false
+
+            });
+            var instencedMesh = new THREE.Mesh(treegeo, shader_material);
+            instanceBranchSet.push(instencedMesh);
+            scene.add(instencedMesh);
+            treegeo = new THREE.BufferGeometry();
+
             for(var cl = 0 ;cl<49;cl++) {
                 var temp = [];
                 for (var j = 0; j < instanceBranchSet.length; j++) {
@@ -247,9 +292,10 @@ function draw(treecircle){
 }
 //有buffer的老版本drawbranch，绘制每一个branch
 var geo = new THREE.BufferGeometry();
+var treegeo = new THREE.Geometry();
 function drawBranch(trunk) {
 
-    var seg = 5 ;
+    var seg = 3 ;
     var vertices = [];
     var _32array = [];
     for (var i = 0, l = trunk.length; i < l - 1; i++) {
@@ -293,62 +339,64 @@ function drawBranch(trunk) {
     geo.addAttribute('position', new THREE.Float32BufferAttribute(_32array, 3));
     geo.computeVertexNormals();
 
-    var particleCount = 1;
-    var translateArray = new Float32Array( particleCount * 3 );
+    treegeo.merge(new THREE.Geometry().fromBufferGeometry(geo));
+    //var particleCount = 1;
+    //var translateArray = new Float32Array( particleCount * 3 );
+    //for ( var i = 0, i3 = 0, l = particleCount; i < l; i ++, i3 += 3 ) {
+    //    translateArray[ i3 ] = 0;
+    //    translateArray[ i3 + 1 ] = 0;
+    //    translateArray[ i3 + 2 ] = 0;
+    //}
+    //var instancedGeo = new THREE.InstancedBufferGeometry();
+    //instancedGeo.index = geo.index;
+    //instancedGeo.attributes = geo.attributes;
+    //instancedGeo.addAttribute('translate', new THREE.InstancedBufferAttribute( translateArray, 3, 1 ) );
 
-    for ( var i = 0, i3 = 0, l = particleCount; i < l; i ++, i3 += 3 ) {
-        translateArray[ i3 ] = 0;
-        translateArray[ i3 + 1 ] = 0;
-        translateArray[ i3 + 2 ] = 0;
-    }
-    var instancedGeo = new THREE.InstancedBufferGeometry();
-    instancedGeo.index = geo.index;
-    instancedGeo.attributes = geo.attributes;
-    instancedGeo.addAttribute('translate', new THREE.InstancedBufferAttribute( translateArray, 3, 1 ) );
-    var uniforms = {
-        map : {value : branchImg}
-    };
-    //uniforms.texture1.value.warpS = uniforms.texture1.value.warpT = THREE.RepeatWrapping;
-    var shader_material = new THREE.RawShaderMaterial({
-        uniforms: uniforms,
-        vertexShader: [
-            "precision highp float;",
-            "",
-            "uniform mat4 modelViewMatrix;",
-            "uniform mat4 projectionMatrix;",
-            "",
-            "attribute vec3 position;",
-            "attribute vec3 translate;",
-            "varying vec2 vUv;",
-            "",
-            "void main() {",
-            "",
-            "	gl_Position = projectionMatrix * modelViewMatrix * vec4( translate + position, 1.0 );",
-            "",
-            "}"
-        ].join("\n"),
-        fragmentShader: [
-            "precision highp float;",
-            "",
-            "varying vec2 vUv;",
-            "",
-            "uniform sampler2D texture1;",
-            "",
-            "void main(void) {",
-            "",
-            "	gl_FragColor = texture2D(texture1, vUv);",
-            "",
-            "}"
-        ].join("\n"),
-        side: THREE.DoubleSide,
-        transparent: false
 
-    });
-    var instencedMesh = new THREE.Mesh(instancedGeo, shader_material);
-    instanceBranchSet.push(instencedMesh);
-
-    var branch = new THREE.Mesh(geo, material);
-    tree.push(branch);
+    //var uniforms = {
+    //    map : {value : branchImg}
+    //};
+    ////uniforms.texture1.value.warpS = uniforms.texture1.value.warpT = THREE.RepeatWrapping;
+    //var shader_material = new THREE.RawShaderMaterial({
+    //    uniforms: uniforms,
+    //    vertexShader: [
+    //        "precision highp float;",
+    //        "",
+    //        "uniform mat4 modelViewMatrix;",
+    //        "uniform mat4 projectionMatrix;",
+    //        "",
+    //        "attribute vec3 position;",
+    //        "attribute vec3 translate;",
+    //        "varying vec2 vUv;",
+    //        "",
+    //        "void main() {",
+    //        "",
+    //        "	gl_Position = projectionMatrix * modelViewMatrix * vec4( translate + position, 1.0 );",
+    //        "",
+    //        "}"
+    //    ].join("\n"),
+    //    fragmentShader: [
+    //        "precision highp float;",
+    //        "",
+    //        "varying vec2 vUv;",
+    //        "",
+    //        "uniform sampler2D texture1;",
+    //        "",
+    //        "void main(void) {",
+    //        "",
+    //        "	gl_FragColor = texture2D(texture1, vUv);",
+    //        "",
+    //        "}"
+    //    ].join("\n"),
+    //    side: THREE.DoubleSide,
+    //    transparent: false
+    //
+    //});
+    //var instencedMesh = new THREE.Mesh(instancedGeo, shader_material);
+    //instanceBranchSet.push(instencedMesh);
+    //
+    //var branch = new THREE.Mesh(geo, material);
+    //tree.push(branch);
 }
 //点集转换为32Array，用于BufferGeometry的position属性
 function translate(vertices,precision){

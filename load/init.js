@@ -126,7 +126,6 @@ function forestupdate(){
             }
         }
         else if(z>1){
-            forest[j][0].visibale = false;
             for(var i = 0;i<forest[j].length;i++){
                 forest[j][i].visible = false;
             }
@@ -164,7 +163,6 @@ function animate() {
     Trackcontrols.update(delta);
     stats.begin();
     renderer.clear();
-    renderer.setFaceCulling(THREE.CullFaceBack,THREE.FrontFaceDirectionCW);
     renderer.render(scene,camera);
     stats.end();
     //lbbs.update();
