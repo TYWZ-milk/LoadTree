@@ -125,7 +125,7 @@ function forestupdate(){
                 forest[j][i].visible = false;
             }
         }
-        else if(z>1){
+        else if(z>1.1){
             for(var i = 0;i<forest[j].length;i++){
                 forest[j][i].visible = false;
             }
