@@ -91,7 +91,7 @@ function initGui(){
     dataGui.add(controls,'Blue_Spruce');
     dataGui.add(controls,'BS07a');
     dataGui.add(controls,'Blend');
-    dataGui.add(controls,"TreeNumber",50,10000).step(50);
+    dataGui.add(controls,"TreeNumber",50,20000).step(50);
     dataGui.add(controls,'Delete');
 }
 //初始化场景
@@ -125,7 +125,7 @@ function forestupdate(){
                 forest[j][i].visible = false;
             }
         }
-        else if(z>1.1){
+        else if(z>1){
             for(var i = 0;i<forest[j].length;i++){
                 forest[j][i].visible = false;
             }
