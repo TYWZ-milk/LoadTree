@@ -25,7 +25,7 @@ function loadSky() {
     });
     // build the skybox Mesh
     // add it to the scene
-    return new THREE.Mesh(new THREE.CubeGeometry(5000, 5000, 5000), material);
+    return new THREE.Mesh(new THREE.CubeGeometry(10000, 10000, 10000), material);
 }
 //地面
 var planevertices;
@@ -35,7 +35,7 @@ function loadGround() {
     texture2.wrapS = THREE.RepeatWrapping;
     texture2.wrapT = THREE.RepeatWrapping;
     texture2.repeat.set(100*50/100,100*50/100);
-    var plane = new THREE.PlaneBufferGeometry(5000,5000,255,255);
+    var plane = new THREE.PlaneBufferGeometry(10000,10000,255,255);
     plane.rotateX(-Math.PI/2);
     planevertices = plane.attributes.position.array;
     var data = generateHeight( 256, 256 );
@@ -165,6 +165,7 @@ function newtreecircle(content,forestsize,tree1,tree2){
                         radius += content[i].treedata[m];
                     }
                     j += radius.length + 5;
+                    var random = Math.floor(Math.random()*5 + 1);
                     circle = {
                         radius: parseFloat(radius/5),
                         pos: new THREE.Vector3(parseFloat(x/5), parseFloat(y/5), parseFloat(z/5))
@@ -218,12 +219,12 @@ function newtreecircle(content,forestsize,tree1,tree2){
             //    transparent: false
             //
             //});
-            //var instencedMesh = new THREE.Mesh(treegeo, shader_material);
+            //var instencedMesh = new THREE.Mesh(branchesgeo, shader_material);
             //instanceBranchSet.push(instencedMesh);
             //scene.add(instencedMesh);
-            //var instencedMesh = new THREE.Mesh(treegeo, material);
+            //var instencedMesh = new THREE.Mesh(branchesgeo, material);
             //scene.add(instencedMesh);
-            //treegeo = new THREE.Geometry();
+            //branchesgeo = new THREE.Geometry();
 
             for(var cl = 0 ;cl<49;cl++) {
                 //buffer版本
@@ -258,11 +259,29 @@ function newtreecircle(content,forestsize,tree1,tree2){
 //将圆环序列还原成树
 var tree = [];
 function draw(treecircle){
-    treegeo = new THREE.Geometry();
+    branchesgeo = new THREE.Geometry();
     drawTree(treecircle);
-    var bigtree = new THREE.Mesh(treegeo,material);
-    tree.push(bigtree);
     addLeaf(treecircle);
+
+    //branches为一棵树所有枝干merge后的
+    var branches = new THREE.Mesh(branchesgeo,material);
+    //branches.updateMatrix();
+    ////treegeo为一棵树的geometry
+    //var treegeo = new THREE.Geometry();
+    //treegeo.merge(branches.geometry,branches.matrix);
+    //treegeo.merge(leaves.geometry,leaves.matrix);
+    ////leafMat为叶子的material branches.material为枝干的material
+    //var materials = [leafMat,branches.material];
+    //var treematerial = new THREE.MeshFaceMaterial(materials);
+    //var comTree = new THREE.Mesh(treegeo,treematerial);
+    //console.log(comTree);
+    var randomx =  Math.random() * 3 + 1;
+    var randomy =  Math.random() * 3 + 1;
+    var randomz =  Math.random() * 3 + 1;
+    branches.scale.set(randomx,randomy,randomz);
+    leaves.scale.set(randomx,randomy,randomz);
+    tree.push(branches);
+
     tree[0].maintrunk = true;
     tree[0].childs = [];
     for(var i = 1;i<tree.length;i++){
@@ -274,7 +293,7 @@ function draw(treecircle){
 }
 //有buffer的老版本drawbranch，绘制每一个branch
 var geo = new THREE.BufferGeometry();
-var treegeo = new THREE.Geometry();
+var branchesgeo = new THREE.Geometry();
 /**
  * @return {boolean}
  */
@@ -347,7 +366,7 @@ function drawBranch(trunk) {
 
     var branch = new THREE.Mesh(geo,material);
     branch.updateMatrix();
-    treegeo.merge(branch.geometry,branch.matrix);
+    branchesgeo.merge(branch.geometry,branch.matrix);
 
 
     //buffergeometry版本
@@ -418,7 +437,7 @@ function drawBranch(trunk) {
     //
     //console.log(branch.geometry);
     //var branchgeo = new THREE.Geometry().fromBufferGeometry(branch.geometry);
-    //treegeo.merge(branchgeo ,branch.matrix);
+    //branchesgeo.merge(branchgeo ,branch.matrix);
     //tree.push(branch);
 }
 //点集转换为32Array，用于BufferGeometry的position属性
@@ -472,14 +491,12 @@ function drawTree(blendtree){
 }
 //添加叶子，在圆环序列上随机添加叶子
 var leafgeo = new THREE.Geometry();
+var leaves;
 function addLeaf(trunk){
     leafgeo = new THREE.Geometry();
     for(var i = 1;i<trunk.length;i++) {
         for(var j = Math.floor(trunk[i].length/2+Math.floor(Math.random()*4 + 1));j<trunk[i].length;j+=Math.floor(Math.random()*3 + 1)) {
-            for (var k = Math.floor(Math.random() * 6 + 1); k < 2; k++) {
-                //var leaf = new RTLeaf();
-                //leaf.init();
-                //leaf.instance(trunk,i,j);
+            for (var k = Math.floor(Math.random() * 6 + 1); k < 4; k++) {
                 var leaf = leafMesh.clone();
                 var phi = Math.random()*60+20;
                 var theta = Math.random()*360;
@@ -499,7 +516,7 @@ function addLeaf(trunk){
             }
         }
     }
-    var leaves = new THREE.Mesh(leafgeo,leafMesh.material);
+    leaves = new THREE.Mesh(leafgeo,leafMesh.material);
     tree.push(leaves);
 }
 //修改树木的位置
@@ -512,51 +529,3 @@ function moveTree(trees){
         scene.add(trees[i]);
     }
 }
-//实例化叶子
-function RTLeaf() {
-    this.parent = null;
-    this.level = 0;
-
-    this.size = 1.0;
-    this.phi = 0;
-    this.theta = 0;
-    this.location = 0.5;
-    this.selfRotate = 0;
-
-    this.mesh = null;
-
-    this.visible = true;
-}
-
-RTLeaf.prototype = {
-    update:function () {
-        var dist = this.mesh.position.clone();
-        dist.sub(camera.position);
-        dist = dist.x*dist.x+dist.y*dist.y+dist.z*dist.z;
-        var le=0;
-        for(var i=0,il=LeavesLevelDefine.length;i<il;i++){
-            if(dist>LeavesLevelDefine[i])le++;
-            else break;
-        }
-        this.level = le;
-        this.mesh.visible = this.visible;
-    },
-    init:function () {
-        this.phi = Math.random()*60+20;
-        this.theta = Math.random()*360;
-        this.selfRotate = Math.random()*360;
-    },
-    instance:function (trunk,i,j) {
-        var mesh = leafMesh.clone();
-        mesh.rotateY(this.theta/180*Math.PI);
-        mesh.rotateZ(this.phi/180*Math.PI);
-        mesh.rotateY(this.selfRotate/180*Math.PI);
-        mesh.position.x = trunk[i][j].pos.x;
-        mesh.position.z = trunk[i][j].pos.z;
-        mesh.position.y = trunk[i][j].pos.y;
-/*        this.size *= 2-this.location;
-        mesh.scale.x = mesh.scale.y = mesh.scale.z = this.size;*/
-        this.mesh = mesh;
-
-    }
-};
