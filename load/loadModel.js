@@ -28,7 +28,7 @@ function loadSky() {
     return new THREE.Mesh(new THREE.CubeGeometry(10000, 10000, 10000), material);
 }
 //地面
-var planevertices;
+var planevertices,groud;
 function loadGround() {
     //add ground
     var texture2 = THREE.ImageUtils.loadTexture("../textures/terrain/backgrounddetailed6.jpg");
@@ -44,9 +44,10 @@ function loadGround() {
         planevertices[ j + 1 ] = data[ i ] * 5;
     }
     plane.computeVertexNormals();
-    return new THREE.Mesh(plane, new THREE.MeshLambertMaterial({
+    groud =  new THREE.Mesh(plane, new THREE.MeshLambertMaterial({
         map: texture2
     }));
+    return groud
 }
 function generateHeight( width, height ) {
 

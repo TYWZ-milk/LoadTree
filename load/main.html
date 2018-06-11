@@ -5,27 +5,24 @@
     <title>LoadTree</title>
     <style>
         body{
-            margin:0;
-            border:none;
+            background-color: #fff;
+            margin: 0px;
+            padding: 0px;
             overflow: hidden;
+            z-index: -1;
         }
         #canvas{
             position:absolute;
             top:0;
             left:0;
         }
-        #depth_container{
-            position: absolute;
-            left:500px;
-            visibility: hidden;
-        }
-        .depth{
-            background-color: aquamarine;
-        }
     </style>
     <script type="text/javascript" src="../lib/three.js"></script>
     <script type="text/javascript" src="../lib/TrackballControls.js"></script>
     <script type="text/javascript" src="../lib/OrbitControls.js"></script>
+    <script type="text/javascript" src="../lib/FirstPersonControls.js"></script>
+    <script type="text/javascript" src="../lib/CanvasRenderer.js"></script>
+    <script type="text/javascript" src="../lib/Projector.js"></script>
     <script type="text/javascript" src="../lib/dat.gui.min.js"></script>
     <script type="text/javascript" src="../lib/stats.min.js"></script>
     <script type="text/javascript" src="../lib/OBJLoader.js"></script>
@@ -40,11 +37,6 @@
 </head>
 <body onload="init()">
 <canvas id="canvas"></canvas>
-<div id="depth_container">
-    <canvas class="depth" id="depth1" width="256" height="256"></canvas>
-    <canvas class="depth" id="depth2" width="128" height="128"></canvas>
-    <canvas class="depth" id="depth3" width="64" height="64"></canvas>
-    <canvas class="depth" id="depth4" width="32" height="32"></canvas>
-</div>
+<div id="demo" style="z-index:1;position:absolute; height:300px; width:300px;"></div>
 </body>
 </html>
