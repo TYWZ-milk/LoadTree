@@ -3,7 +3,7 @@ var leafImg;
 var leafMat;
 var material;
 var leafMesh;
-var LevelDefine = [0,250000,500000,1000000,2000000,3000000,4000000,5000000,6000000,7000000,8000000,9000000,10000000,15000000,25000000];
+var LevelDefine = [0,500000,2000000,4000000,5000000,6000000,7000000,8000000,9000000,10000000,15000000,25000000];
 var LeavesLevelDefine = [0,10000,250000,1000000];
 var instanceBranchSet = [];
 //天空盒
@@ -25,23 +25,23 @@ function loadSky() {
     });
     // build the skybox Mesh
     // add it to the scene
-    return new THREE.Mesh(new THREE.CubeGeometry(10000, 10000, 10000), material);
+    return new THREE.Mesh(new THREE.CubeGeometry(25000, 25000, 25000), material);
 }
 //地面
 var planevertices,groud;
 function loadGround() {
     //add ground
-    var texture2 = THREE.ImageUtils.loadTexture("../textures/terrain/backgrounddetailed6.jpg");
+    var texture2 = THREE.ImageUtils.loadTexture("../textures/terrain/grasslight-big.jpg");
     texture2.wrapS = THREE.RepeatWrapping;
     texture2.wrapT = THREE.RepeatWrapping;
     texture2.repeat.set(100*50/100,100*50/100);
-    var plane = new THREE.PlaneBufferGeometry(10000,10000,255,255);
+    var plane = new THREE.PlaneBufferGeometry(25000,25000,255,255);
     plane.rotateX(-Math.PI/2);
     planevertices = plane.attributes.position.array;
     var data = generateHeight( 256, 256 );
     for ( var i = 0, j = 0, l = planevertices.length; i < l; i ++, j += 3 ) {
 
-        planevertices[ j + 1 ] = data[ i ] * 5;
+        planevertices[ j + 1 ] = data[ i ] * 10;
     }
     plane.computeVertexNormals();
     groud =  new THREE.Mesh(plane, new THREE.MeshLambertMaterial({
@@ -251,10 +251,11 @@ function newtreecircle(content,forestsize,tree1,tree2){
                 }
                 forest.push(temp);
                 moveTree(temp);
-                planepos+=30 * Math.floor(Math.random() * 6 + 1);
+                planepos+=30 * Math.floor(Math.random() * 12 + 1);
             }
             tree = [];
         }
+        forestupdate();
     }
 }
 //将圆环序列还原成树
@@ -276,11 +277,10 @@ function draw(treecircle){
     //var treematerial = new THREE.MeshFaceMaterial(materials);
     //var comTree = new THREE.Mesh(treegeo,treematerial);
     //console.log(comTree);
-    var randomx =  Math.random() * 3 + 1;
-    var randomy =  Math.random() * 3 + 1;
-    var randomz =  Math.random() * 3 + 1;
-    branches.scale.set(randomx,randomy,randomz);
-    leaves.scale.set(randomx,randomy,randomz);
+    var randomy =  Math.random() * 6 + 1;
+    var randomsize = Math.random()*2 + 1;
+    branches.scale.set(randomy/randomsize,randomy,randomy/randomsize);
+    leaves.scale.set(randomy/randomsize,randomy,randomy/randomsize);
     tree.push(branches);
 
     tree[0].maintrunk = true;
@@ -289,7 +289,7 @@ function draw(treecircle){
         tree[0].childs.push(tree[i]);
     }
     moveTree(tree);
-    planepos+=30 * Math.floor(Math.random() * 6 + 1);
+    planepos+=30 * Math.floor(Math.random() * 18 + 1);
     forest.push(tree);
 }
 //有buffer的老版本drawbranch，绘制每一个branch

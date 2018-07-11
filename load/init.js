@@ -29,12 +29,12 @@ function init() {
     scene.add(light);
 
 
-    camera = new THREE.PerspectiveCamera(45,width/height,1,10000);
-    camera.position.y = 50;
+    camera = new THREE.PerspectiveCamera(45,width/height,1,100000);
+    camera.position.y = 3000;
     camera.position.z = 1000;
     camera.lookAt(0,0,0);
 
-    Trackcontrols = new THREE.FirstPersonControls( camera, renderer.domElement );
+    Trackcontrols = new THREE.OrbitControls( camera, renderer.domElement );
     Trackcontrols.movementSpeed = 500;
     Trackcontrols.lookSpeed = 0.1;
     Trackcontrols.lookVertical = true;
@@ -156,7 +156,7 @@ function initGui(){
     dataGui.add(controls,'Blue_Spruce');
     dataGui.add(controls,'BS07a');
     dataGui.add(controls,'Blend');
-    dataGui.add(controls,"TreeNumber",50,20000).step(50);
+    dataGui.add(controls,"TreeNumber",50,15000).step(50);
     dataGui.add(controls, "Orbit");
     dataGui.add(controls,'Delete');
 }
@@ -185,17 +185,19 @@ function forestupdate(){
             if (dist > LevelDefine[i])le++;
             else break;
         }
-        forest[j][0].visible = (j % le == 0);
+        //if(j>2) {
+            forest[j][0].visible = (j % le == 0);
+        //}
         if(forest[j][0].visible == false){
             for(var i = 0;i<forest[j].length;i++){
                 forest[j][i].visible = false;
             }
         }
-        else if(z>1){
-            for(var i = 0;i<forest[j].length;i++){
-                forest[j][i].visible = false;
-            }
-        }
+        //else if(z>1){
+        //    for(var i = 0;i<forest[j].length;i++){
+        //        forest[j][i].visible = false;
+        //    }
+        //}
         else{
             for(var i = 0;i<forest[j].length;i++){
                 forest[j][i].visible = true;
@@ -247,7 +249,9 @@ function orbit(){
 
 var clock = new THREE.Clock();
 function animate() {
-    forestupdate();
+    var d= new Date();
+    if(d.getSeconds()%10 == 0)
+        forestupdate();
     //leavesupdate();
     var delta = clock.getDelta();
     orbit();
