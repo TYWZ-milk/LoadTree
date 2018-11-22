@@ -1,11 +1,10 @@
 # LoadTree
 Generate blending tree files through SB-Tree, and store these files into MongoDB, and then restore blending trees through this program. It can save a lot of calculation from the front-end compared to SB-Tree.
 
-## 2018/4/27更新
->目前项目处于论文阶段，下一步与地形编辑项目进行结合。该项目目前最多加载2000棵树木，FPS会下降到5左右，界面出现卡顿，使用了随机剔除算法。LOD有待进一步验证是否有用，因为LOD虽然减小了渲染的精度，但树木精度已经降得很低，而且LOD还增加了数据量。
->如果要进一步优化的话，可以使用‘广告牌’的功能，即远处看只是一张贴图，近距离看则提高物体的精度。
+## 2018/4/27 update
+>Currently the project is in the paper stage and the next step is to combine it with the terrain editing project. The project currently loads up to 2,000 trees, FPS will drop to around 5, and the interface appears to be stuck, using a random culling algorithm. The LOD needs further validation to be useful, because LOD reduces the precision of rendering, but the tree accuracy has dropped very low, and LOD has increased the amount of data.
+>If you want to further optimize, you can use the function of 'billboard', that is, just look at a map in the distance, and improve the accuracy of the object when viewed from a close distance.
 
->太懒了，就写到这里了，下面是技术路线。
 
 ![](https://github.com/TYWZ-milk/LoadTree/raw/master/ReadMe/result1.png)
 ![](https://github.com/TYWZ-milk/LoadTree/raw/master/ReadMe/result2.png)
