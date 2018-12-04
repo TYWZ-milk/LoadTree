@@ -133,7 +133,7 @@ var controls = new function (){
     this.Blend = function (){
         if(this.AL06a == true && this.Blue_Spruce==true){
             THREE.Cache.clear();
-            initObject("AL06a","Blue Spruce",this.TreeNumber);
+            initObject("AL06a","Blue_Spruce",this.TreeNumber);
         }
         else if(this.AL06a == true && this.BS07a == true){
             THREE.Cache.clear();
@@ -141,13 +141,13 @@ var controls = new function (){
         }
         else if(this.Blue_Spruce == true && this.BS07a == true){
             THREE.Cache.clear();
-            initObject("Blue Spruce","BS07a",this.TreeNumber);
+            initObject("Blue_Spruce","BS07a",this.TreeNumber);
         }
     };
-    this.Orbit = function (){
-        orbit1 = true;
-        camera.position.set(-4000,1300,-4000);
-    };
+    //this.Orbit = function (){
+    //    orbit1 = true;
+    //    camera.position.set(-4000,1300,-4000);
+    //};
 };
 //控制界面
 function initGui(){
@@ -157,7 +157,7 @@ function initGui(){
     dataGui.add(controls,'BS07a');
     dataGui.add(controls,'Blend');
     dataGui.add(controls,"TreeNumber",50,15000).step(50);
-    dataGui.add(controls, "Orbit");
+    //dataGui.add(controls, "Orbit");
     dataGui.add(controls,'Delete');
 }
 //初始化场景

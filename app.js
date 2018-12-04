@@ -2,7 +2,7 @@ var express = require("express");
 var app = express();
 var router = require("./router/router.js");
 var path = require('path');
-
+__dirname = './load';
 var session = require('express-session');
 global.PROJECTPATH = __dirname;
 //使用session
@@ -17,8 +17,11 @@ app.use(session({
 //模板引擎
 app.set("view engine","ejs");
 //静态页面
-app.use(express.static("./public"));
-app.use("/pictures",express.static("./pictures"));
+app.use(express.static(__dirname + "./lib"));
+app.use("/load",express.static("./load"));
+app.use("/public",express.static("./public"));
+app.use("/lib",express.static("./lib"));
+app.use("/textures",express.static("./textures"));
 app.use(express.static(path.join(__dirname,'uploads')));
 
 app.all('*', function(req, res, next) {
