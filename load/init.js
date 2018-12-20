@@ -131,17 +131,17 @@ var controls = new function (){
         }
     };
     this.Blend = function (){
-        if(this.AL06a == true && this.Blue_Spruce==true){
+        if(this.AL06a === true && this.Blue_Spruce === true){
             THREE.Cache.clear();
-            initObject("AL06a","Blue_Spruce",this.TreeNumber);
+            initObject("AL06a","Blue Spruce",this.TreeNumber);
         }
-        else if(this.AL06a == true && this.BS07a == true){
+        else if(this.AL06a === true && this.BS07a === true){
             THREE.Cache.clear();
             initObject("AL06a","BS07a",this.TreeNumber);
         }
-        else if(this.Blue_Spruce == true && this.BS07a == true){
+        else if(this.Blue_Spruce === true && this.BS07a === true){
             THREE.Cache.clear();
-            initObject("Blue_Spruce","BS07a",this.TreeNumber);
+            initObject("Blue Spruce","BS07a",this.TreeNumber);
         }
     };
     //this.Orbit = function (){
@@ -167,7 +167,7 @@ function initScene() {
 }
 function leavesupdate(){
     for(var j=0,jl=leaves.length;j<jl;j++){
-        leaves[j].visible = (j%leaves[j].level == 0);
+        leaves[j].visible = (j%leaves[j].level === 0);
         leaves[j].update();
     }
 }
@@ -186,9 +186,9 @@ function forestupdate(){
             else break;
         }
         //if(j>2) {
-            forest[j][0].visible = (j % le == 0);
+            forest[j][0].visible = (j % le === 0);
         //}
-        if(forest[j][0].visible == false){
+        if(forest[j][0].visible === false){
             for(var i = 0;i<forest[j].length;i++){
                 forest[j][i].visible = false;
             }
@@ -250,7 +250,7 @@ function orbit(){
 var clock = new THREE.Clock();
 function animate() {
     var d= new Date();
-    if(d.getSeconds()%10 == 0)
+    if(d.getSeconds()%10 === 0)
         forestupdate();
     //leavesupdate();
     var delta = clock.getDelta();

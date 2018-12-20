@@ -91,26 +91,26 @@ function initObject(tree1,tree2,forestsize){
     leafMesh.geometry.translate(0,leaf_size/2.0,0);
 
     var i;
-    if(tree1 == "AL06a"  && tree2 =="Blue Spruce")
+    if(tree1 === "AL06a"  && tree2 ==="Blue Spruce")
         i=0;
-    else if(tree1 == "AL06a"  && tree2 =="BS07a")
-        i=6;
-    else if(tree1 == "Blue Spruce"  && tree2 =="BS07a")
-        i=12;
+    else if (tree2 === "BS07a" && tree1 === "AL06a")
+    i = 6;
+else if (tree1 === "Blue Spruce" && tree2 === "BS07a")
+    i = 12;
     for(var j = 0 ;j<forestsize/2500||forestsize/10<250 ; i++,j++) {
         if(forestsize/10 <250){
-            $.get("http://127.0.0.1:9091/getTreeModel?pageId=" + i, {}, function (result) {
+            $.get("http://localhost:9091/getTreeModel?pageId=" + i, {}, function (result) {
                 newtreecircle(result, forestsize/50, tree1, tree2);
             });
             break;
         }
         else {
-            $.get("http://127.0.0.1:9091/getTreeModel?pageId=" + i, {}, function (result) {
+            $.get("http://localhost:9091/getTreeModel?pageId=" + i, {}, function (result) {
                 newtreecircle(result, 50, tree1, tree2);
             });
         }
-        if(j+1>forestsize/2500-1 && forestsize%2500!=0){
-            $.get("http://127.0.0.1:9091/getTreeModel?pageId=" + i+1, {}, function (result) {
+        if(j+1>forestsize/2500-1 && forestsize%2500!==0){
+            $.get("http://localhost:9091/getTreeModel?pageId=" + i+1, {}, function (result) {
                 newtreecircle(result, forestsize%2500/50, tree1, tree2);
             });
             break;
@@ -128,7 +128,7 @@ function newtreecircle(content,forestsize,tree1,tree2){
     var branchcircle = [];
 
     for(var i = 0 ; i < forestsize;i++) {
-        if (content[i].TreeID == treeID) {
+        if (content[i].treeID === treeID) {
             treecircle = [];
             x = "";
             y = "";
@@ -136,34 +136,34 @@ function newtreecircle(content,forestsize,tree1,tree2){
             radius = "";
             branchcircle = [];
             instanceBranchSet = [];
-            for (var j = 0; j < content[i].treedata.length; j++) {
-                if (content[i].treedata[j] == 'b') {
-                    if (branchcircle.length != 0)
+            for (var j = 0; j < content[i].treeData.length; j++) {
+                if (content[i].treeData[j] === 'b') {
+                    if (branchcircle.length !== 0)
                         treecircle.push(branchcircle);
                     branchcircle = [];
                     j += 5;
                 }
-                else if (content[i].treedata[j] == 'x') {
-                    for (var m = j + 1; content[i].treedata[m] != 'y'; m++) {
-                        x += content[i].treedata[m];
+                else if (content[i].treeData[j] === 'x') {
+                    for (var m = j + 1; content[i].treeData[m] !== 'y'; m++) {
+                        x += content[i].treeData[m];
                     }
                     j += x.length;
                 }
-                else if (content[i].treedata[j] == 'y') {
-                    for (var m = j + 1; content[i].treedata[m] != 'z'; m++) {
-                        y += content[i].treedata[m];
+                else if (content[i].treeData[j] === 'y') {
+                    for (var m = j + 1; content[i].treeData[m] !== 'z'; m++) {
+                        y += content[i].treeData[m];
                     }
                     j += y.length;
                 }
-                else if (content[i].treedata[j] == 'z') {
-                    for (var m = j + 1; content[i].treedata[m] != 'r'; m++) {
-                        z += content[i].treedata[m];
+                else if (content[i].treeData[j] === 'z') {
+                    for (var m = j + 1; content[i].treeData[m] !== 'r'; m++) {
+                        z += content[i].treeData[m];
                     }
                     j += z.length;
                 }
-                else if (content[i].treedata[j] == 'r') {
-                    for (var m = j + 6; m < content[i].treedata.length && (content[i].treedata[m] != 'x' && content[i].treedata[m] != 'b'); m++) {
-                        radius += content[i].treedata[m];
+                else if (content[i].treeData[j] === 'r') {
+                    for (var m = j + 6; m < content[i].treeData.length && (content[i].treeData[m] !== 'x' && content[i].treeData[m] !== 'b'); m++) {
+                        radius += content[i].treeData[m];
                     }
                     j += radius.length + 5;
                     var random = Math.floor(Math.random()*5 + 1);
@@ -318,7 +318,7 @@ function drawBranch(trunk) {
                 posy = Math.abs(trunk[i].pos.y - trunk[i - 1].pos.y);
                 posz = Math.abs(trunk[i].pos.z - trunk[i - 1].pos.z);
             }
-            if (i == 0) {
+            if (i === 0) {
                 posx = Math.abs(trunk[i + 1].pos.x - trunk[i].pos.x);
                 posy = Math.abs(trunk[i + 1].pos.y - trunk[i].pos.y);
                 posz = Math.abs(trunk[i + 1].pos.z - trunk[i].pos.z);
@@ -445,15 +445,15 @@ function drawBranch(trunk) {
 function translate(vertices,precision){
     var _32array = [];
     for(var i=0;i<vertices.length;i++){
-        if(i + 1 == vertices.length-1){
+        if(i + 1 === vertices.length-1){
             _32array.push(vertices[i].x, vertices[i].y, vertices[i].z);
             _32array.push(vertices[i- precision +1].x, vertices[i- precision +1].y, vertices[i- precision +1].z);
             _32array.push(vertices[vertices.length-1].x, vertices[vertices.length-1].y, vertices[vertices.length-1].z);
         }
-        else if(i == vertices.length-1){
+        else if(i === vertices.length-1){
             _32array.push(vertices[i].x, vertices[i].y, vertices[i].z);
         }
-        else if((i+1) %precision == 0 && i + 1 != vertices.length-1){
+        else if((i+1) %precision === 0 && i + 1 !== vertices.length-1){
             _32array.push(vertices[i].x, vertices[i].y, vertices[i].z);
             _32array.push(vertices[i - precision +1].x, vertices[i - precision +1].y, vertices[i - precision +1].z);
             _32array.push(vertices[i + precision].x, vertices[i + precision].y, vertices[i + precision].z);
@@ -470,7 +470,7 @@ function translate(vertices,precision){
         }
     }
     for(var j = vertices.length-2; j>=precision;j--){
-        if(j % precision ==0){
+        if(j % precision === 0){
             _32array.push(vertices[j].x, vertices[j].y, vertices[j].z);
             _32array.push(vertices[j + precision -1].x, vertices[j + precision -1].y, vertices[j + precision -1].z);
             _32array.push(vertices[j - 1].x, vertices[j - 1].y, vertices[j -1].z);
