@@ -1,89 +1,27 @@
 var branchImg;
-var leafImg;
 var leafMat;
 var material;
 var leafMesh;
 var LevelDefine = [0,500000,2000000,4000000,5000000,6000000,7000000,8000000,9000000,10000000,15000000,25000000];
 var LeavesLevelDefine = [0,10000,250000,1000000];
 var instanceBranchSet = [];
-//天空盒
-function loadSky() {
-    //add skybox
-    var urlPrefix = "../textures/skybox/";
-    var urls = [ urlPrefix + "px.jpg", urlPrefix + "nx.jpg",
-        urlPrefix + "py.jpg", urlPrefix + "ny.jpg",
-        urlPrefix + "pz.jpg", urlPrefix + "nz.jpg" ];
-    var textureCube = THREE.ImageUtils.loadTextureCube( urls );
-    var shader = THREE.ShaderLib["cube"];
-    shader.uniforms['tCube'].value= textureCube;   // textureCube has been init before
-    var material = new THREE.ShaderMaterial({
-        fragmentShader    : shader.fragmentShader,
-        vertexShader  : shader.vertexShader,
-        uniforms  : shader.uniforms,
-        depthWrite:false,
-        side:THREE.BackSide
-    });
-    // build the skybox Mesh
-    // add it to the scene
-    return new THREE.Mesh(new THREE.CubeGeometry(25000, 25000, 25000), material);
-}
-//地面
-var planevertices,groud;
-function loadGround() {
-    //add ground
-    var texture2 = THREE.ImageUtils.loadTexture("../textures/terrain/grasslight-big.jpg");
-    texture2.wrapS = THREE.RepeatWrapping;
-    texture2.wrapT = THREE.RepeatWrapping;
-    texture2.repeat.set(100*50/100,100*50/100);
-    var plane = new THREE.PlaneBufferGeometry(25000,25000,255,255);
-    plane.rotateX(-Math.PI/2);
-    planevertices = plane.attributes.position.array;
-    var data = generateHeight( 256, 256 );
-    for ( var i = 0, j = 0, l = planevertices.length; i < l; i ++, j += 3 ) {
 
-        planevertices[ j + 1 ] = data[ i ] * 10;
-    }
-    plane.computeVertexNormals();
-    groud =  new THREE.Mesh(plane, new THREE.MeshLambertMaterial({
-        map: texture2
-    }));
-    return groud
-}
-function generateHeight( width, height ) {
-
-    var size = width * height, data = new Uint8Array( size ),
-        perlin = new ImprovedNoise(), quality = 1, z = Math.random() * 100;
-
-    for ( var j = 0; j < 4; j ++ ) {
-
-        for ( var i = 0; i < size; i ++ ) {
-
-            var x = i % width, y = ~~ ( i / width );
-            data[ i ] += Math.abs( perlin.noise( x / quality, y / quality, z ) * quality * 1.75 );
-
-        }
-
-        quality *= 5;
-
-    }
-
-    return data;
-
-}
 //初始化树木
 function initObject(tree1,tree2,forestsize){
+    //枝干和叶子的模型
     branchImg = new THREE.ImageUtils.loadTexture("../textures/tree/diffuse-min.png");
-    leafImg = new THREE.ImageUtils.loadTexture("../textures/tree/leaf01-min.png");
+    material = new THREE.MeshLambertMaterial({
+        // wireframe:true,
+        side:THREE.DoubleSide,
+        map:branchImg
+    });
+
+    var leafImg = new THREE.ImageUtils.loadTexture("../textures/tree/leaf01-min.png");
     leafMat = new THREE.MeshLambertMaterial({
         map:leafImg,
         color:0x253F08,
         side:THREE.DoubleSide,
         transparent:true
-    });
-    material = new THREE.MeshLambertMaterial({
-        // wireframe:true,
-        side:THREE.DoubleSide,
-        map:branchImg
     });
     var leaf_size = 14;
     var geo = new THREE.PlaneGeometry(leaf_size,leaf_size);
@@ -94,9 +32,9 @@ function initObject(tree1,tree2,forestsize){
     if(tree1 === "AL06a"  && tree2 ==="Blue Spruce")
         i=0;
     else if (tree2 === "BS07a" && tree1 === "AL06a")
-    i = 6;
-else if (tree1 === "Blue Spruce" && tree2 === "BS07a")
-    i = 12;
+        i = 6;
+    else if (tree1 === "Blue Spruce" && tree2 === "BS07a")
+        i = 12;
     for(var j = 0 ;j<forestsize/2500||forestsize/10<250 ; i++,j++) {
         if(forestsize/10 <250){
             $.get("http://localhost:27017/getTreeModel?pageId=" + i, {}, function (result) {
