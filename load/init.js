@@ -1,15 +1,17 @@
 /**
  * Created by deii66 on 2018/1/30.
  */
-var scene,canvas,width,height,renderer,camera,Trackcontrols,stats,lbbs;
-var forestSize = 100;//森林总数
+// stats 控制面板 lbbs LBB.js渲染优化 forest 场景内所有树木 leaves 与leavesupdate()相关
+var scene,renderer,camera,Trackcontrols,stats,lbbs;
 var forest = [];
 var leaves = [];
+
 function init() {
+
     lbbs = new LBBs();
     var canvas = document.getElementById("canvas");
-    width = window.innerWidth;
-    height = window.innerHeight;
+    var width = window.innerWidth;
+    var height = window.innerHeight;
     renderer = new THREE.WebGLRenderer({
         antialias:true,
         canvas:canvas
@@ -28,7 +30,6 @@ function init() {
     light = new THREE.AmbientLight(0xffffff,1);
     scene.add(light);
 
-
     camera = new THREE.PerspectiveCamera(45,width/height,1,100000);
     camera.position.y = 3000;
     camera.position.z = 1000;
@@ -45,8 +46,10 @@ function init() {
     //smallMap();
     animate();
 }
+
 //小地图
 function smallMap(){
+
     var plane2Geometry = new THREE.PlaneGeometry(60, 40, 1, 1);
     var plane2Material = new THREE.MeshLambertMaterial({color: 0xffffff});
     var plane2 = new THREE.Mesh(plane2Geometry, plane2Material);
@@ -101,6 +104,7 @@ function smallMap(){
 
 }
 
+//控制面板
 function initStats() {
 
     stats = new Stats();
@@ -116,13 +120,20 @@ function initStats() {
 
     return stats;
 }
-//控制界面参数
-var orbit1 = false;
+
+//控制界面参数 browse 轨道浏览参数
+var browse = false;
 var controls = new function (){
+
+    //树木种类
     this.AL06a = false;
     this.Blue_Spruce = false;
     this.BS07a = false;
-    this.TreeNumber = forestSize;
+
+    //初始树木量
+    this.TreeNumber = 100;
+
+    //清空画面
     this.Delete = function(){
         for(var i=0 ; i <forest.length;i++){
             for(var j = 0;j<forest[i].length;j++) {
@@ -130,6 +141,8 @@ var controls = new function (){
             }
         }
     };
+
+    //树木合成
     this.Blend = function (){
         if(this.AL06a === true && this.Blue_Spruce === true){
             THREE.Cache.clear();
@@ -144,11 +157,15 @@ var controls = new function (){
             initObject("Blue Spruce","BS07a",this.TreeNumber);
         }
     };
+
+    //浏览轨道
     //this.Orbit = function (){
-    //    orbit1 = true;
+    //    browse = true;
     //    camera.position.set(-4000,1300,-4000);
     //};
 };
+
+
 //控制界面
 function initGui(){
     var dataGui = new dat.GUI();
@@ -160,17 +177,21 @@ function initGui(){
     //dataGui.add(controls, "Orbit");
     dataGui.add(controls,'Delete');
 }
+
 //初始化场景
 function initScene() {
     scene.add(loadGround());
     scene.add(loadSky());
 }
+
+//叶子实时渲染
 function leavesupdate(){
     for(var j=0,jl=leaves.length;j<jl;j++){
         leaves[j].visible = (j%leaves[j].level === 0);
         leaves[j].update();
     }
 }
+
 //从画面中剔除部分距离较远的树木
 function forestupdate(){
     var cameraMatrix = new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse);
@@ -186,9 +207,9 @@ function forestupdate(){
             else break;
         }
         //if(j>2) {
-            forest[j][0].visible = (j % le === 0);
+            forest[j][0].visible = (j % le == 0);
         //}
-        if(forest[j][0].visible === false){
+        if(forest[j][0].visible == false){
             for(var i = 0;i<forest[j].length;i++){
                 forest[j][i].visible = false;
             }
@@ -224,8 +245,9 @@ function forestupdate(){
 //    }
 //}
 
+//回字形轨道
 function orbit(){
-    if(orbit1 == true) {
+    if(browse == true) {
         Trackcontrols.enabled = false;
         camera.lookAt(0,0,0);
         if(camera.position.x < 4000 && camera.position.z == -4000)
@@ -241,7 +263,7 @@ function orbit(){
         else if(camera.position.x ==0 && camera.position.z ==0)
         {
             Trackcontrols.enabled = true;
-            orbit1 = false;
+            browse = false;
         }
     }
 }
@@ -249,17 +271,23 @@ function orbit(){
 
 var clock = new THREE.Clock();
 function animate() {
+
+    //每10秒更新一次界面，防止频闪现象
     var d= new Date();
     if(d.getSeconds()%10 === 0)
         forestupdate();
     //leavesupdate();
+
+    //浏览轨道控制
     var delta = clock.getDelta();
     orbit();
     Trackcontrols.update(delta);
+
+    //实时渲染
     stats.begin();
     renderer.clear();
     renderer.render(scene,camera);
     stats.end();
-    //lbbs.update();
+    lbbs.update();
     requestAnimationFrame(animate);
 }
