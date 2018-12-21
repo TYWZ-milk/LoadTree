@@ -28,33 +28,53 @@ function initObject(tree1,tree2,forestsize){
     leafMesh = new THREE.Mesh(geo,leafMat);
     leafMesh.geometry.translate(0,leaf_size/2.0,0);
 
-    var i;
-    if(tree1 === "AL06a"  && tree2 ==="Blue Spruce")
-        i=0;
-    else if (tree2 === "BS07a" && tree1 === "AL06a")
-        i = 6;
-    else if (tree1 === "Blue Spruce" && tree2 === "BS07a")
-        i = 12;
-    for(var j = 0 ;j<forestsize/2500||forestsize/10<250 ; i++,j++) {
+    // var i;
+    // if(tree1 === "AL06a"  && tree2 ==="Blue Spruce")
+    //     i=0;
+    // else if (tree2 === "BS07a" && tree1 === "AL06a")
+    //     i = 6;
+    // else if (tree1 === "Blue Spruce" && tree2 === "BS07a")
+    //     i = 12;
+    for(var j = 0 ;j<forestsize/2500||forestsize/10<250 ; j++) {
         if(forestsize/10 <250){
-            $.get("http://localhost:27017/getTreeModel?pageId=" + i, {}, function (result) {
+            $.get("http://localhost:27017/getTreeModel", {}, function (result) {
                 newtreecircle(result, forestsize/50, tree1, tree2);
             });
             break;
         }
         else {
-            $.get("http://localhost:27017/getTreeModel?pageId=" + i, {}, function (result) {
+            $.get("http://localhost:27017/getTreeModel", {}, function (result) {
                 newtreecircle(result, 50, tree1, tree2);
             });
         }
         if(j+1>forestsize/2500-1 && forestsize%2500!==0){
-            $.get("http://localhost:27017/getTreeModel?pageId=" + i+1, {}, function (result) {
+            $.get("http://localhost:27017/getTreeModel", {}, function (result) {
                 newtreecircle(result, forestsize%2500/50, tree1, tree2);
             });
             break;
         }
     }
+    // for(var j = 0 ;j<forestsize/2500||forestsize/10<250 ; i++,j++) {
+    //     if(forestsize/10 <250){
+    //         $.get("http://localhost:27017/getTreeModel?pageId=" + i, {}, function (result) {
+    //             newtreecircle(result, forestsize/50, tree1, tree2);
+    //         });
+    //         break;
+    //     }
+    //     else {
+    //         $.get("http://localhost:27017/getTreeModel?pageId=" + i, {}, function (result) {
+    //             newtreecircle(result, 50, tree1, tree2);
+    //         });
+    //     }
+    //     if(j+1>forestsize/2500-1 && forestsize%2500!==0){
+    //         $.get("http://localhost:27017/getTreeModel?pageId=" + i+1, {}, function (result) {
+    //             newtreecircle(result, forestsize%2500/50, tree1, tree2);
+    //         });
+    //         break;
+    //     }
+    // }
 }
+
 //从MongoDB中取出过渡树木参数，转换为圆环序列
 function newtreecircle(content,forestsize,tree1,tree2){
     planepos = 30;
@@ -196,6 +216,7 @@ function newtreecircle(content,forestsize,tree1,tree2){
         forestupdate();
     }
 }
+
 //将圆环序列还原成树
 var tree = [];
 function draw(treecircle){

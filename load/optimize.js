@@ -25,10 +25,10 @@ function forestupdate(){
             else break;
         }
         //if(j>2) {
-        forest[j][0].visible = (j % le == 0);
+        forest[j][0].visible = (j % le === 0);
         //}
         //对叶子采取同样的操作
-        if(forest[j][0].visible == false){
+        if(forest[j][0].visible === false){
             for(var i = 0;i<forest[j].length;i++){
                 forest[j][i].visible = false;
             }

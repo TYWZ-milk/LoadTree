@@ -213,7 +213,7 @@ function animate() {
 
     //每10秒更新一次界面，防止频闪现象
     var d= new Date();
-    //if(d.getSeconds()%10 === 0)
+    if(d.getSeconds()%10 === 0)
         forestupdate();
     //leavesupdate();
 
