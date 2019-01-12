@@ -99,18 +99,18 @@ else if (tree1 === "Blue Spruce" && tree2 === "BS07a")
     i = 12;
     for(var j = 0 ;j<forestsize/2500||forestsize/10<250 ; i++,j++) {
         if(forestsize/10 <250){
-            $.get("http://localhost:9091/getTreeModel?pageId=" + i, {}, function (result) {
+            $.get("http://localhost:27017/getTreeModel?pageId=" + i, {}, function (result) {
                 newtreecircle(result, forestsize/50, tree1, tree2);
             });
             break;
         }
         else {
-            $.get("http://localhost:9091/getTreeModel?pageId=" + i, {}, function (result) {
+            $.get("http://localhost:27017/getTreeModel?pageId=" + i, {}, function (result) {
                 newtreecircle(result, 50, tree1, tree2);
             });
         }
         if(j+1>forestsize/2500-1 && forestsize%2500!==0){
-            $.get("http://localhost:9091/getTreeModel?pageId=" + i+1, {}, function (result) {
+            $.get("http://localhost:27017/getTreeModel?pageId=" + i+1, {}, function (result) {
                 newtreecircle(result, forestsize%2500/50, tree1, tree2);
             });
             break;

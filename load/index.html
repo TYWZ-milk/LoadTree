@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <script src="../public/jquery-1.11.3.min.js"></script>
+</head>
+<body>
+<div>
+    上传文件 ： <input type="file" name="file" multiple id="fileId" />
+    <button type="submit" name="btn" value="提交" id="btnId" onclick="check()">提交</button>
+</div>
+<script type="text/javascript">
+    function check() {
+        var objFile = document.getElementById("fileId");
+        if(objFile.value == "") {
+            alert("不能空")
+        }
+        var files = $('#fileId').prop('files'); //获取到文件列表
+        console.log(files.length);
+        if(files.length == 0) {
+            alert('请选择文件');
+        } else {
+            for(var i = 0; f = files[i]; i++) {
+                var reader = new FileReader(); //新建一个FileReader
+                reader.readAsText(files[i], "UTF-8"); //读取文件
+                reader.onload = function(evt) { //读取完文件之后会回来这里
+                    var fileString = evt.target.result; // 读取文件内容
+                    console.log(fileString)
+                }
+            }
+        }
+    }
+</script>
+</body>
+</html>
